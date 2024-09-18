@@ -1,0 +1,9 @@
+FROM docker.io/library/node:latest
+
+WORKDIR /design_of_www
+COPY ./package.json .
+COPY ./package-lock.json .
+RUN npm install
+EXPOSE 3000
+
+CMD ["npm", "start"]
