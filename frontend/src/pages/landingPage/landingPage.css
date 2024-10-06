@@ -42,6 +42,7 @@
 /* Card content text alignment */
 .card-content {
     text-align: center;
+    font-style: italic;
 }
 
 /* Footer styles */

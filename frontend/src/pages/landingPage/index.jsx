@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
-import { Typography, TextField, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment} from '@mui/material';
 import Header from '../../components/header';
+import Footer from '../../components/footer'; 
+import { Typography, TextField, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment} from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import './landingPage.css';
 
 const LandingPage = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  // handle button click
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  // close the menu
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   return (
     <div>
       <Header />
@@ -67,20 +57,7 @@ const LandingPage = () => {
           ))}
         </Grid>
       </Container>
-
-      {/* Footer */}
-      <Box component="footer" className="footer">
-        <Typography variant="body1">Contact Us</Typography>
-        <Link href="#" className="link">
-          Email
-        </Link>
-        <Link href="#" className="link">
-          Facebook
-        </Link>
-        <Link href="#" className="link">
-          Instagram
-        </Link>
-      </Box>
+      <Footer />
     </div>
   );
 };
