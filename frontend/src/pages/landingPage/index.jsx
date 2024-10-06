@@ -1,9 +1,21 @@
-import React from 'react';
-import { AppBar, Toolbar, Typography, TextField, Button, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment} from '@mui/material';
+import React, { useState } from 'react';
+import { AppBar, Toolbar, Typography, TextField, Button, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment, Menu, MenuItem} from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
+import { IoIosArrowDropdown } from "react-icons/io";
 import './landingPage.css';
 
 const LandingPage = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // handle button click
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // close the menu
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <div>
       {/* Header */}
@@ -13,11 +25,25 @@ const LandingPage = () => {
             Food Tips
           </Typography>
           {/* Navigation Buttons */}
-          <Button variant="text" className="nav-button">
-            Account
+          <Button 
+            variant="text"
+            className="nav-button" 
+            onClick={handleClick}
+            endIcon={<IoIosArrowDropdown className="dropdown-icon" />}
+          >
+            Recipes 
           </Button>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} className="nav-menu" onClose={handleClose} >
+            <MenuItem onClick={handleClose} className="nav-item">Find Recipes</MenuItem>
+            <MenuItem onClick={handleClose}>Add Recipe</MenuItem>
+            <MenuItem onClick={handleClose}>My Recipes</MenuItem>
+            <MenuItem onClick={handleClose}>Favourite Recipes</MenuItem>
+          </Menu>
           <Button variant="text" className="nav-button">
             Shopping List
+          </Button>
+          <Button variant="text" className="nav-button">
+            Log In
           </Button>
         </Toolbar>
       </AppBar>

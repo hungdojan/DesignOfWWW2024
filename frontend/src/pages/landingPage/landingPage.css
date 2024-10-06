@@ -6,11 +6,24 @@
 /* Button styles */
 .header .nav-button {
     color: white;
+    border-radius: 0;
     font-weight: bold;
+    padding: 20px 10px;
 }
 
 .header .nav-button:hover {
     color: black;
+    background-color: #70CDFF;
+}
+
+.header .nav-button .dropdown-icon {
+    color: black;
+}
+
+/* tooo */
+.header .nav-item {
+    color: blue;
+    margin: 20px;
 }
 
 .box-grid {
