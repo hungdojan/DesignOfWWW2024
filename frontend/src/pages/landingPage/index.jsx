@@ -1,15 +1,21 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, TextField, Button, Box, Container, Card, CardContent, CardMedia, Link, Grid } from '@mui/material';
+import { AppBar, Toolbar, Typography, TextField, Button, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment} from '@mui/material';
+import { FaSearch } from 'react-icons/fa';
 
 const styles = {
   header: { backgroundColor: '#47BFFF' },
-  searchBarContainer: { margin: '20px 0', textAlign: 'center' },
-  searchBar: { backgroundColor: '#83D670', borderRadius: 4 },
   button: { color: '#B88262' },
   recommendedCard: { backgroundColor: '#68A062', color: '#fff', margin: 16, width: 220 },
   cardContent: { textAlign: 'center' },
   footer: { backgroundColor: '#715635', padding: 16, textAlign: 'center', color: '#fff' },
   link: { margin: '0 10px', color: '#B88262' },
+  searchBarContainer: {
+    padding: '20px',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  searchInput: { padding: '0px 5px'},
+  searchIcon: { color: '#83D670' },
 };
 
 const LandingPage = () => {
@@ -36,9 +42,19 @@ const LandingPage = () => {
         <TextField
           variant="outlined"
           placeholder="Search Recipes..."
-          size="medium"
           fullWidth
-          style={styles.searchBar}
+          style={styles.searchInput}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start" style={styles.searchIcon}>
+                <FaSearch />
+              </InputAdornment>
+            ),
+            style: {
+              borderRadius: '30px',
+              padding: '0 20px',
+            },
+          }}
         />
       </Container>
 
