@@ -1,0 +1,53 @@
+/* Header styles */
+.header {
+    background-color: var(--my-light-blue);
+}
+
+/* Button styles */
+.button {
+    color: var(--my-light-brown);
+}
+
+/* Recommended card styles */
+.recommended-card {
+    background-color: var(--my-light-green);
+    color: #fff;
+    margin: 16px;
+    width: 220px;
+}
+
+/* Card content text alignment */
+.card-content {
+    text-align: center;
+}
+
+/* Footer styles */
+.footer {
+    background-color: var(--my-dark-brown);
+    padding: 16px;
+    text-align: center;
+    color: #fff;
+}
+
+/* Link styles */
+.link {
+    margin: 0 10px;
+    color: var(--my-light-brown);
+}
+
+/* Search bar container */
+.search-bar-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Search input styles */
+.search-input {
+    padding: 0px 5px;
+}
+
+/* Search icon color */
+.search-icon {
+    color: var(--my-light-green);
+}
