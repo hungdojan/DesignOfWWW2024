@@ -1,0 +1,9 @@
+.shopping-list-title {
+    background-color: var(--my-light-brown);
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+}

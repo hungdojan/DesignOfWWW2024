@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logo from '../assets/logo-tmp.png';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
 import { IoIosArrowDropdown } from 'react-icons/io';
 
@@ -16,6 +17,11 @@ const Header = () => {
   return (
     <AppBar position="static" className="header">
       <Toolbar>
+        <img
+          src={logo}
+          alt="Logo"
+          style={{ height: '50px', marginRight: '16px' }}
+        />
         <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
           Food Tips
         </Typography>
