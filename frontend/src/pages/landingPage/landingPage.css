@@ -4,12 +4,21 @@
 }
 
 /* Button styles */
-.button {
-    color: var(--my-light-brown);
+.header .nav-button {
+    color: white;
+    font-weight: bold;
+}
+
+.header .nav-button:hover {
+    color: black;
+}
+
+.box-grid {
+    justify-content: center;
 }
 
 /* Recommended card styles */
-.recommended-card {
+.box-grid .recommended-card {
     background-color: var(--my-light-green);
     color: #fff;
     margin: 16px;
@@ -30,7 +39,7 @@
 }
 
 /* Link styles */
-.link {
+.footer .link {
     margin: 0 10px;
     color: var(--my-light-brown);
 }
@@ -48,6 +57,6 @@
 }
 
 /* Search icon color */
-.search-icon {
+.search-bar-container .search-icon {
     color: var(--my-light-green);
 }

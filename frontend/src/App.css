@@ -5,6 +5,11 @@
   --my-light-green: #68A062;
 }
 
+body {
+  margin: 0;
+  font-family: Quicksand, sans-serif;
+}
+
 /* .App {
   text-align: center;
 }

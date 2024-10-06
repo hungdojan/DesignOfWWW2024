@@ -13,10 +13,10 @@ const LandingPage = () => {
             Food Tips
           </Typography>
           {/* Navigation Buttons */}
-          <Button variant="text" className="button">
+          <Button variant="text" className="nav-button">
             Account
           </Button>
-          <Button variant="text" className="button">
+          <Button variant="text" className="nav-button">
             Shopping List
           </Button>
         </Toolbar>
@@ -48,7 +48,7 @@ const LandingPage = () => {
         <Typography variant="h5" gutterBottom>
           Recommended Recipes
         </Typography>
-        <Grid container spacing={2} justifyContent="center">
+        <Grid container spacing={2} className="box-grid">
           {[1, 2, 3].map((_, index) => (
             <Grid item key={index}>
               <Card className="recommended-card">
