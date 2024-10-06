@@ -13,6 +13,7 @@ import {
   Paper,
 } from '@mui/material';
 import { Add, Remove, Delete, Edit } from '@mui/icons-material';
+import Header from '../../components/header';
 
 const ShoppingListPage = () => {
   const [shoppingLists, setShoppingLists] = useState([
@@ -73,6 +74,7 @@ const ShoppingListPage = () => {
 
   return (
     <Container>
+      <Header />
       <Typography variant="h4" gutterBottom>
         Shopping Lists
       </Typography>

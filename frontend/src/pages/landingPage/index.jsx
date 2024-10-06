@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, TextField, Button, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment, Menu, MenuItem} from '@mui/material';
+import { Typography, TextField, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment} from '@mui/material';
+import Header from '../../components/header';
 import { FaSearch } from 'react-icons/fa';
-import { IoIosArrowDropdown } from "react-icons/io";
 import './landingPage.css';
 
 const LandingPage = () => {
@@ -18,36 +18,7 @@ const LandingPage = () => {
   };
   return (
     <div>
-      {/* Header */}
-      <AppBar position="static" className="header">
-        <Toolbar>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
-            Food Tips
-          </Typography>
-          {/* Navigation Buttons */}
-          <Button 
-            variant="text"
-            className="nav-button" 
-            onClick={handleClick}
-            endIcon={<IoIosArrowDropdown className="dropdown-icon" />}
-          >
-            Recipes 
-          </Button>
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} className="nav-menu" onClose={handleClose} >
-            <MenuItem onClick={handleClose} className="nav-item">Find Recipes</MenuItem>
-            <MenuItem onClick={handleClose}>Add Recipe</MenuItem>
-            <MenuItem onClick={handleClose}>My Recipes</MenuItem>
-            <MenuItem onClick={handleClose}>Favourite Recipes</MenuItem>
-          </Menu>
-          <Button variant="text" className="nav-button">
-            Shopping List
-          </Button>
-          <Button variant="text" className="nav-button">
-            Log In
-          </Button>
-        </Toolbar>
-      </AppBar>
-
+      <Header />
       {/* Search Bar (Outside Header) */}
       <Container className="search-bar-container">
         <TextField
