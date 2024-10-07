@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import LandingPage from "./pages/landingPage";
 import ShoppingListPage from "./pages/shoppingListPage";
 import RecipePage from "./pages/recipePage";
+import AddRecipePage from "./pages/addRecipePage";
 
 const App = () => {
   const publicRoutes = [
@@ -13,6 +14,10 @@ const App = () => {
     {
       path: "/recipe",
       element: <RecipePage />,
+    },
+    {
+      path: "/recipe/new",
+      element: <AddRecipePage />,
     },
     {
       path: "/shop_list",
