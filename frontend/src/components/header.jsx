@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import logo from '../assets/logo-tmp.png';
 import { AppBar, Toolbar, Typography, Button, Menu, MenuItem } from '@mui/material';
 import { IoIosArrowDropdown } from 'react-icons/io';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -12,6 +14,16 @@ const Header = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const [userName, setUserName] = useState(null);
+
+  // TODO: handle any logout, user auth, storing user info, etc.
+  const handleLoginSuccess = (credentialResponse) => {
+    var decoded = jwtDecode(credentialResponse.credential);
+    // console.log(decoded);
+    var name = decoded.given_name;
+    setUserName(name);
   };
 
   return (
@@ -42,9 +54,22 @@ const Header = () => {
         <Button variant="text" className="nav-button">
           Shopping List
         </Button>
-        <Button variant="text" className="nav-button">
-          Log In
-        </Button>
+
+        {!userName ? (
+          <GoogleLogin
+            onSuccess={handleLoginSuccess}
+            onError={() => {
+              console.log('Login Failed');
+            }}
+          />
+        ) : (
+
+          <Button variant="text" className="nav-button">
+            Logout {userName}
+          </Button>
+   
+        )}
+
       </Toolbar>
     </AppBar>
   );
