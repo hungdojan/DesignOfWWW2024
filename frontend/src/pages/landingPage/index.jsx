@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
-import Header from '../../components/header';
-import Footer from '../../components/footer'; 
-import { Typography, TextField, Box, Container, Card, CardContent, CardMedia, Link, Grid, InputAdornment} from '@mui/material';
-import { FaSearch } from 'react-icons/fa';
-import './landingPage.css';
+import React, { useEffect } from "react";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import {
+  Typography,
+  TextField,
+  Container,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid2,
+  InputAdornment,
+} from "@mui/material";
+import { FaSearch } from "react-icons/fa";
+import "./landingPage.css";
 
 const LandingPage = () => {
+  useEffect(() => {
+    document.title = "Home Page";
+  }, []);
   return (
     <div>
       <Header />
@@ -23,8 +35,8 @@ const LandingPage = () => {
               </InputAdornment>
             ),
             style: {
-              borderRadius: '30px',
-              padding: '0 20px',
+              borderRadius: "30px",
+              padding: "0 20px",
             },
           }}
         />
@@ -35,9 +47,9 @@ const LandingPage = () => {
         <Typography variant="h5" gutterBottom>
           Recommended Recipes
         </Typography>
-        <Grid container spacing={2} className="box-grid">
+        <Grid2 container spacing={2} className="box-grid">
           {[1, 2, 3].map((_, index) => (
-            <Grid item key={index}>
+            <Grid2 item key={index}>
               <Card className="recommended-card">
                 {/* Placeholder for Recipe Image */}
                 <CardMedia
@@ -53,9 +65,9 @@ const LandingPage = () => {
                   </Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Grid2>
           ))}
-        </Grid>
+        </Grid2>
       </Container>
       <Footer />
     </div>
