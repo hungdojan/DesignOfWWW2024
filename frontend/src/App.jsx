@@ -4,6 +4,8 @@ import LandingPage from "./pages/landingPage";
 import ShoppingListPage from "./pages/shoppingListPage";
 import RecipePage from "./pages/recipePage";
 import AddRecipePage from "./pages/addRecipePage";
+import FavoriteRecipesPage from "./pages/favoriteRecipePage";
+import ListRecipePage from "./pages/listRecipePage";
 
 const App = () => {
   const publicRoutes = [
@@ -12,12 +14,20 @@ const App = () => {
       element: <LandingPage />,
     },
     {
-      path: "/recipe",
+      path: "/recipe/view/:id",
       element: <RecipePage />,
     },
     {
       path: "/recipe/new",
       element: <AddRecipePage />,
+    },
+    {
+      path: "/recipe/my_list",
+      element: <ListRecipePage />,
+    },
+    {
+      path: "/recipe/favorite",
+      element: <FavoriteRecipesPage />,
     },
     {
       path: "/shop_list",

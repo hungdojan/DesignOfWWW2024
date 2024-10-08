@@ -67,14 +67,18 @@ const Header = () => {
           className="nav-menu"
           onClose={handleClose}
         >
-          <MenuItem onClick={handleClose} className="nav-item">
+          {/* <MenuItem onClick={handleClose} className="nav-item">
             Find Recipes
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem onClick={() => navigate("/recipe/new")}>
             Add Recipe
           </MenuItem>
-          <MenuItem onClick={handleClose}>My Recipes</MenuItem>
-          <MenuItem onClick={handleClose}>Favorite Recipes</MenuItem>
+          <MenuItem onClick={() => navigate("/recipe/my_list")}>
+            My Recipes
+          </MenuItem>
+          <MenuItem onClick={() => navigate("/recipe/favorite")}>
+            Favorite Recipes
+          </MenuItem>
         </Menu>
         <Button
           variant="text"
