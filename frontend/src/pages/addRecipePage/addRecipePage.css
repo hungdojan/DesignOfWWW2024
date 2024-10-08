@@ -29,3 +29,55 @@
     background-color: var(--my-light-blue);
     color: whitesmoke;
 }
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-form {
+    background-color: whitesmoke;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    max-width: 720px;
+    margin: 20px;
+    padding: 20px;
+}
+
+.add-form .one-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;  
+}
+
+.add-image {
+    margin: 10px;
+}
+
+.add-form .input-field {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    resize: none;
+    overflow: auto;
+    padding: 5px;
+    margin: 5px 20px;
+    width: 550px;
+}
+
+.add-button {
+    background-color: var(--my-light-green);
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    margin: 10px 0;
+    text-transform: uppercase;
+}
+
+.add-button:hover {
+    background-color: var(--my-light-blue);
+}
