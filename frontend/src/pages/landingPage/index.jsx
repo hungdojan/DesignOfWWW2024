@@ -14,32 +14,32 @@ import {
 import { FaSearch } from "react-icons/fa";
 import "./landingPage.css";
 
-import salmonImage from '../../assets/recipe/salmon.jpg';
-import greekSaladImage from '../../assets/recipe/greek_salad.jpg';
-import hotChocolateImage from '../../assets/recipe/hot_chocolate.jpg';
+import salmonImage from "../../assets/recipe/salmon.jpg";
+import greekSaladImage from "../../assets/recipe/greek_salad.jpg";
+import hotChocolateImage from "../../assets/recipe/hot_chocolate.jpg";
+import FoodCard from "../../components/FoodCard";
 
 // hardcoded recipes for demo purposes
 const recipes = [
   {
     id: 1,
-    title: 'Salmon Soup',
+    title: "Salmon Soup",
     image: salmonImage,
-    alt: 'Salmon Soup',
+    alt: "Salmon Soup",
   },
   {
     id: 2,
-    title: 'Greek Salad',
+    title: "Greek Salad",
     image: greekSaladImage,
-    alt: 'Greek Salad',
+    alt: "Greek Salad",
   },
   {
     id: 3,
-    title: 'Hot Chocolate',
+    title: "Hot Chocolate",
     image: hotChocolateImage,
-    alt: 'Hot Chocolate',
+    alt: "Hot Chocolate",
   },
 ];
-
 
 const LandingPage = () => {
   useEffect(() => {
@@ -75,26 +75,18 @@ const LandingPage = () => {
           Recommended Recipes
         </Typography>
         <Grid2 container spacing={2} className="box-grid">
-        {recipes.map((recipe) => (
-          <Grid2 item key={recipe.id}>
-            <Card className="recommended-card">
-              {/* Recipe Image */}
-              <CardMedia
-                component="img"
-                height="140"
-                image={recipe.image}
+          {recipes.map((recipe) => (
+            <Grid2 item key={recipe.id}>
+              <FoodCard
+                img_src={recipe.image}
                 alt={recipe.alt}
+                title={recipe.title}
+                editable={false}
+                id={recipe.id}
               />
-              <CardContent className="card-content">
-                {/* Recipe Title */}
-                <Typography variant="h6" component="div">
-                  {recipe.title}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid2>
-        ))}
-      </Grid2>
+            </Grid2>
+          ))}
+        </Grid2>
       </Container>
       <Footer />
     </div>

@@ -1,0 +1,15 @@
+/* Recommended card styles */
+.food-card {
+    background-color: var(--my-light-green);
+    color: #fff;
+    margin: 16px;
+    width: 220px;
+}
+
+/* Card content text alignment */
+.card-content {
+    background-color: var(--my-light-green);
+    color: #fff;
+    text-align: center;
+    font-style: italic;
+}
