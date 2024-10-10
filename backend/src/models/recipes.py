@@ -2,7 +2,6 @@ from dataclasses import dataclass
 
 from models import DB
 from models.base import BaseManager
-from sqlalchemy import ForeignKey
 
 
 @dataclass

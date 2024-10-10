@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS Images  (
     ID INT PRIMARY KEY,
     recipeID INT,
     target VARCHAR(255),
-    FOREIGN KEY (recipeID) REFERENCES Recipes(ID)
+    FOREIGN KEY (recipeID) REFERENCES Recipes(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Groups  (
@@ -41,15 +41,15 @@ CREATE TABLE IF NOT EXISTS ShoppingItem  (
     shoppingListID INT,
     name VARCHAR(100),
     completed BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (shoppingListID) REFERENCES ShoppingList(ID)
+    FOREIGN KEY (shoppingListID) REFERENCES ShoppingList(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS Favorite  (
     userID INT,
     recipeID INT,
     PRIMARY KEY (userID, recipeID),
-    FOREIGN KEY (userID) REFERENCES Users(ID),
-    FOREIGN KEY (recipeID) REFERENCES Recipes(ID)
+    FOREIGN KEY (userID) REFERENCES Users(ID) ON DELETE CASCADE,
+    FOREIGN KEY (recipeID) REFERENCES Recipes(ID) ON DELETE CASCADE
 );
 
 
@@ -57,16 +57,18 @@ CREATE TABLE IF NOT EXISTS UsersGroupsTBL  (
     userID INT,
     groupID INT,
     PRIMARY KEY (userID, groupID),
-    FOREIGN KEY (userID) REFERENCES Users(ID),
-    FOREIGN KEY (groupID) REFERENCES Groups(ID)
+    FOREIGN KEY (userID) REFERENCES Users(ID) ON DELETE CASCADE,
+    FOREIGN KEY (groupID) REFERENCES Groups(ID) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS RecipesIngredientsTBL  (
     recipeID INT,
     ingredientID INT,
+    -- how much
+    --
     PRIMARY KEY (recipeID, ingredientID),
-    FOREIGN KEY (recipeID) REFERENCES Recipes(ID),
-    FOREIGN KEY (ingredientID) REFERENCES Ingredients(ID)
+    FOREIGN KEY (recipeID) REFERENCES Recipes(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ingredientID) REFERENCES Ingredients(ID) ON DELETE CASCADE
 );
 
 

@@ -29,5 +29,3 @@ class UserManager(BaseManager[Users]):
     def query_all() -> list[Users]:
         user = Users.query.all()
         return user
-
-

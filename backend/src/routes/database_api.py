@@ -2,6 +2,8 @@ from flask import Blueprint
 from models.groups import GroupManager
 from models.users import UserManager
 # from src.models.images import ImageManager
+from src.models.images import ImageManager
+from src.models.ingredients import IngredientManager
 from src.models.recipes import RecipeManager
 
 database_api = Blueprint("database", __name__, url_prefix="/debug")
@@ -22,9 +24,14 @@ def recipes_all():
     return {"recipe": RecipeManager.query_all()}
 
 
-# @database_api.route("/images")
-# def images_all():
-#     return {"images": ImageManager.query_all()}
+@database_api.route("/images")
+def images_all():
+    return {"images": ImageManager.query_all()}
+
+@database_api.route("/ingredients")
+def ingredients_all():
+    return {"ingredients": IngredientManager.query_all()}
+
 
 
 # | Favorite              |
