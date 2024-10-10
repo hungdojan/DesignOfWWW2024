@@ -16,7 +16,7 @@ services:
       - "3306:3306"
     volumes:
       - db_volume:/var/lib/mysql:z
-      - ./config/mariadb/:/docker-entrypoint-initdb.d:z
+      - ./config/mariadb/init_scripts/:/docker-entrypoint-initdb.d:z
 
   backend:
     build:
