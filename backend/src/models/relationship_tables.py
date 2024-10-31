@@ -1,21 +1,21 @@
 import enum
 
 from models.base import Base
-from sqlalchemy import Column, Enum, Float, ForeignKey, Integer, Table
+from sqlalchemy import Column, Enum, Float, ForeignKey, String, Table
 
 Favorite = Table(
     "Favorite",
     Base.metadata,
     Column(
         "userID",
-        Integer,
+        String(255),
         ForeignKey("Users.ID", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
     ),
     Column(
         "recipeID",
-        Integer,
+        String(255),
         ForeignKey("Recipes.ID", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
@@ -28,14 +28,14 @@ UsersGroupsTBL = Table(
     Base.metadata,
     Column(
         "userID",
-        Integer,
+        String(255),
         ForeignKey("Users.ID", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
     ),
     Column(
         "groupID",
-        Integer,
+        String(255),
         ForeignKey("Groups.ID", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
@@ -56,14 +56,14 @@ RecipesIngredientsTBL = Table(
     Base.metadata,
     Column(
         "recipeID",
-        Integer,
+        String(255),
         ForeignKey("Recipes.ID", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
     ),
     Column(
         "ingredientID",
-        Integer,
+        String(255),
         ForeignKey("Ingredients.ID", ondelete="CASCADE"),
         nullable=False,
         primary_key=True,
