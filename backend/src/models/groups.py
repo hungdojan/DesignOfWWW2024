@@ -1,21 +1,24 @@
-from dataclasses import dataclass
+from __future__ import annotations
+
+from sqlalchemy import String
 
 from models import DB
 from models.base import BaseManager
+from models.relationship_tables import UsersGroupsTBL
+from sqlalchemy.orm import Mapped, mapped_column
 
-@dataclass
+
 class Groups(DB.Model):
     __tablename__ = "Groups"
-    ID: int
-    name: str
+    ID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    ID = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(100), nullable=False)
+    users = DB.relationship("Users", secondary=UsersGroupsTBL, backref="Groups")
+
 
 class GroupManager(BaseManager[Groups]):
 
     @staticmethod
     def query_all() -> list[Groups]:
-        groups = Groups.query.all()
+        groups: list[Groups] = Groups.query.all()
         return groups
-

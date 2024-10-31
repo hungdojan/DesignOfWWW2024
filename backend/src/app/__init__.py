@@ -1,8 +1,7 @@
 import mysql.connector
+from api import api
 from flask import Flask
 from models import DB
-from routes.database_api import database_api
-from routes.echo import echo
 
 
 def create_app() -> Flask:
@@ -16,7 +15,8 @@ def create_app() -> Flask:
     )
 
     DB.init_app(app)
+    api.init_app(app)
+    with app.app_context():
+        DB.create_all()
 
-    app.register_blueprint(echo)
-    app.register_blueprint(database_api)
     return app

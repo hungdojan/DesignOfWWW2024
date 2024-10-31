@@ -1,20 +1,15 @@
-from dataclasses import dataclass
-
 from models import DB
 from models.base import BaseManager
-from sqlalchemy import ForeignKey
+from models.recipes import Recipes
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-@dataclass
 class Images(DB.Model):
     __tablename__ = "Images"
-    ID: int
-    recipeID: int
-    target: str
-
-    ID = DB.Column(DB.Integer, primary_key=True)
-    recipeID = DB.Column(DB.Integer, ForeignKey("Recipes.ID"), nullable=False)
-    target = DB.Column(DB.String(255), nullable=False)
+    ID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    recipeID: Mapped[int] = mapped_column(ForeignKey(Recipes.ID), nullable=False)
+    target: Mapped[str] = mapped_column(String(255), nullable=False)
 
 
 class ImageManager(BaseManager[Images]):

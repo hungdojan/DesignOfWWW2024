@@ -1,31 +1,36 @@
+from __future__ import annotations
+
 import enum
-from dataclasses import dataclass
+from typing import Optional
 
 from models import DB
 from models.base import BaseManager
+from models.relationship_tables import Favorite, UsersGroupsTBL
+from sqlalchemy import Enum, String
+from sqlalchemy.orm import Mapped, mapped_column
 
-class UserRole(enum.Enum):
-    ADMIN=1
-    USER=2
 
-@dataclass
+class UserRole(str, enum.Enum):
+    ADMIN = "ADMIN"
+    USER = "USER"
+
+
 class Users(DB.Model):
     __tablename__ = "Users"
-    ID: int
-    username: str
-    role: UserRole
-    name: str
-    email: str
+    ID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False)
+    name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    email: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
-    ID = DB.Column(DB.Integer, primary_key=True)
-    username = DB.Column(DB.String(50), nullable=False, unique=True)
-    role = DB.Column(DB.Integer, nullable=False)
-    name = DB.Column(DB.String(100), nullable=True)
-    email = DB.Column(DB.String(100), nullable=True)
+    # relationships
+    groups = DB.relationship("Groups", secondary=UsersGroupsTBL)
+    favorites = DB.relationship("Recipes", secondary=Favorite)
+
 
 class UserManager(BaseManager[Users]):
 
     @staticmethod
     def query_all() -> list[Users]:
-        user = Users.query.all()
+        user: list[Users] = Users.query.all()
         return user

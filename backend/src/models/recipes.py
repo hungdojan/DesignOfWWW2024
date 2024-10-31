@@ -1,23 +1,29 @@
-from dataclasses import dataclass
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Optional
 
 from models import DB
 from models.base import BaseManager
+from models.relationship_tables import Favorite, RecipesIngredientsTBL
+from sqlalchemy import DateTime, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-@dataclass
 class Recipes(DB.Model):
     __tablename__ = "Recipes"
-    ID: int
-    name: str
-    externalPage: str
-    description: str
-    instructions: str
+    ID: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    externalPage: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    authorID: Mapped[int] = mapped_column(ForeignKey("Users.ID"), nullable=True)
+    timeCreated: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    instructions: Mapped[Optional[str]] = mapped_column(Text)
 
-    ID = DB.Column(DB.Integer, primary_key=True)
-    name = DB.Column(DB.String(100), nullable=False)
-    externalPage = DB.Column(DB.String(255), nullable=True)
-    description = DB.Column(DB.Text, nullable=True)
-    instructions = DB.Column(DB.Text, nullable=True)
+    favorited_by = DB.relationship("Users", secondary=Favorite, backref="Recipes")
+    ingredients = DB.relationship(
+        "Ingredients", secondary=RecipesIngredientsTBL, backref="Recipes"
+    )
 
 
 class RecipeManager(BaseManager[Recipes]):
@@ -26,4 +32,3 @@ class RecipeManager(BaseManager[Recipes]):
     def query_all() -> list[Recipes]:
         recipes = Recipes.query.all()
         return recipes
-

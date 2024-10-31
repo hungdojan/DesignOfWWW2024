@@ -7,6 +7,8 @@ services:
       context: ./config/mariadb/
       dockerfile: Containerfile
     environment:
+      # use `mysql -u${MARIADB_ROOT_USERNAME} -p ${MARIADB_DATABASE}`
+      # to connect to the database inside container
       MARIADB_ROOT_USERNAME: root
       MARIADB_ROOT_PASSWORD: password
       MARIADB_DATABASE: db
@@ -15,7 +17,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db_volume:/var/lib/mysql:z
+      # uncomment for persistent data
+      # - db_volume:/var/lib/mysql:z
       - ./config/mariadb/init_scripts/:/docker-entrypoint-initdb.d:z
 
   backend:
