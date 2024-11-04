@@ -8,8 +8,19 @@ recipes_api_ns = Namespace(
     "Recipes", description="All endpoints related to recipes.", path="/recipes"
 )
 
-recipe_model = recipes_api_ns.model(
-    "Recipe",
+_model_new = recipes_api_ns.model(
+    "RecipeNew",
+    {
+        "name": fields.String,
+        "externalPage": fields.String,
+        "authorID": fields.String,
+        "timeCreated": fields.DateTime,
+        "description": fields.String,
+        "instructions": fields.String,
+    },
+)
+_model_view = recipes_api_ns.model(
+    "RecipeView",
     {
         "ID": fields.String,
         "name": fields.String,
@@ -25,11 +36,13 @@ recipe_model = recipes_api_ns.model(
 @recipes_api_ns.route("/")
 class RecipesAPI(Resource):
 
+    @recipes_api_ns.marshal_list_with(_model_view)
     def get(self):
         # TODO: user query
         return [g.as_dict() for g in RecipeManager.query_all()], HTTPStatus.OK
 
-    @recipes_api_ns.expect(recipe_model)
+    @recipes_api_ns.expect(_model_new)
+    @recipes_api_ns.marshal_with(_model_view)
     def post(self):
         data = request.get_json()
 
@@ -45,6 +58,7 @@ class RecipesAPI(Resource):
 @recipes_api_ns.doc(data={"_id": "Recipe's ID."})
 class RecipeAPI(Resource):
 
+    @recipes_api_ns.marshal_with(_model_view)
     def get(self, _id: str):
         recipe = RecipeManager.query_by_id(_id)
         _dict = {}
@@ -52,7 +66,8 @@ class RecipeAPI(Resource):
             _dict = recipe.as_dict()
         return _dict, HTTPStatus.OK
 
-    @recipes_api_ns.expect(recipe_model)
+    @recipes_api_ns.expect(_model_view)
+    @recipes_api_ns.marshal_with(_model_view)
     def patch(self, _id: str):
         data = request.get_json()
         recipe = RecipeManager.update_one(_id, **data)

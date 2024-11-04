@@ -10,19 +10,24 @@ ingredients_api_ns = Namespace(
     path="/ingredients",
 )
 
-ingredient_model = ingredients_api_ns.model(
-    "Ingredient", {"ID": fields.String, "name": fields.String}
-)
+ingred_mdl = {
+    "new": ingredients_api_ns.model("IngredientNew", {"name": fields.String}),
+    "view": ingredients_api_ns.model(
+        "IngredientView", {"ID": fields.String, "name": fields.String}
+    ),
+}
 
 
 @ingredients_api_ns.route("/")
 class IngredientsAPI(Resource):
 
+    @ingredients_api_ns.marshal_list_with(ingred_mdl["view"])
     def get(self):
         # TODO: user query
         return [g.as_dict() for g in IngredientManager.query_all()], HTTPStatus.OK
 
-    @ingredients_api_ns.expect(ingredient_model)
+    @ingredients_api_ns.expect(ingred_mdl["new"])
+    @ingredients_api_ns.marshal_with(ingred_mdl["view"])
     def post(self):
         data = request.get_json()
 
@@ -38,6 +43,7 @@ class IngredientsAPI(Resource):
 @ingredients_api_ns.doc(data={"_id": "Ingredient's ID."})
 class IngredientAPI(Resource):
 
+    @ingredients_api_ns.marshal_with(ingred_mdl["view"])
     def get(self, _id: str):
         ingredient = IngredientManager.query_by_id(_id)
         _dict = {}
@@ -45,7 +51,8 @@ class IngredientAPI(Resource):
             _dict = ingredient.as_dict()
         return _dict, HTTPStatus.OK
 
-    @ingredients_api_ns.expect(ingredient_model)
+    @ingredients_api_ns.expect(ingred_mdl["view"])
+    @ingredients_api_ns.marshal_with(ingred_mdl["view"])
     def patch(self, _id: str):
         data = request.get_json()
         ingredient = IngredientManager.update_one(_id, **data)

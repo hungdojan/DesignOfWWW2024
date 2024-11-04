@@ -8,18 +8,26 @@ images_api_ns = Namespace(
     "Images", description="All endpoints related to images.", path="/images"
 )
 
-image_model = images_api_ns.model(
-    "Image", {"ID": fields.String, "recipeID": fields.String, "target": fields.String}
-)
+image_mdl = {
+    "new": images_api_ns.model(
+        "ImageNew", {"recipeID": fields.String, "target": fields.String}
+    ),
+    "view": images_api_ns.model(
+        "ImageView",
+        {"ID": fields.String, "recipeID": fields.String, "target": fields.String},
+    ),
+}
 
 
 @images_api_ns.route("/")
 class ImagesAPI(Resource):
 
+    @images_api_ns.marshal_list_with(image_mdl["view"])
     def get(self):
         return [g.as_dict() for g in ImageManager.query_all()], HTTPStatus.OK
 
-    @images_api_ns.expect(image_model)
+    @images_api_ns.expect(image_mdl["new"])
+    @images_api_ns.marshal_with(image_mdl["view"])
     def post(self):
         data = request.get_json()
 
@@ -35,6 +43,7 @@ class ImagesAPI(Resource):
 @images_api_ns.doc(data={"_id": "Image's ID."})
 class ImageAPI(Resource):
 
+    @images_api_ns.marshal_with(image_mdl["view"])
     def get(self, _id: str):
         image = ImageManager.query_by_id(_id)
         _dict = {}
@@ -42,7 +51,8 @@ class ImageAPI(Resource):
             _dict = image.as_dict()
         return _dict, HTTPStatus.OK
 
-    @images_api_ns.expect(image_model)
+    @images_api_ns.expect(image_mdl["view"])
+    @images_api_ns.marshal_with(image_mdl["view"])
     def patch(self, _id: str):
         data = request.get_json()
         image = ImageManager.update_one(_id, **data)

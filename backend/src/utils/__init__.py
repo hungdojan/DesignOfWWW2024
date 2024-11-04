@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from flask import Response, jsonify
 from flask_restx.api import HTTPStatus
-from models.base import Base
+import models.base
 
 
 def error_message(
@@ -11,11 +11,11 @@ def error_message(
     return jsonify({"message": msg}), error_code
 
 
-def allowed_columns(_filter: dict, _cls: type[Base]) -> dict:
+def allowed_columns(_filter: dict, _cls: type[models.base.Base]) -> dict:
     return {k: v for k, v in _filter.items() if k in _cls.get_columns()}
 
 
-def preprocess_filter(_filter: dict, _cls: type[Base]) -> list:
+def preprocess_filter(_filter: dict, _cls: type[models.base.Base]) -> list:
     return [
         f"{_cls.__tablename__}.{k}" == v
         for k, v in allowed_columns(_filter, _cls).items()
