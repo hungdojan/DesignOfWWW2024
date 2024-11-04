@@ -2,10 +2,11 @@ FROM docker.io/library/python:latest
 
 WORKDIR /design_of_www
 COPY requirements.txt requirements.txt
+RUN mkdir /data
 RUN pip3 install -r requirements.txt
 ENV PYTHONPATH "/design_of_www/src"
 
-expose 5000
+EXPOSE 5000
 
 CMD ["flask", "--debug", "run", "-h", "0.0.0.0", "-p", "5000"]
 # CMD ["gunicorn", "-b", "0.0.0.0:5000", "--chdir", "src", "wsgi:app"]

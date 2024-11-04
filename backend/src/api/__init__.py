@@ -1,21 +1,26 @@
+import api.groups_api
+import api.images_api
+import api.ingredients_api
+import api.recipes_api
+import api.shopping_items_api
+import api.shopping_lists_api
+import api.users_api
+import api.favorites_api
+import api.auth_api
 from flask_restx import Api
-from api.groups_api import groups_api_ns
-from api.images_api import images_api_ns
-from api.ingredients_api import ingredients_api_ns
-from api.recipes_api import recipes_api_ns
-from api.shopping_items_api import shopping_items_api_ns
-from api.shopping_list_api import shopping_lists_api_ns
-from api.users_api import users_api_ns
 
-api = Api(
+food_tips_api = Api(
     title="FoodTipsAPI",
     version="1.0.0",
 )
 
-api.add_namespace(groups_api_ns)
-api.add_namespace(images_api_ns)
-api.add_namespace(ingredients_api_ns)
-api.add_namespace(recipes_api_ns)
-api.add_namespace(shopping_items_api_ns)
-api.add_namespace(shopping_lists_api_ns)
-api.add_namespace(users_api_ns)
+food_tips_api.add_namespace(api.auth_api.auth_ns_api)
+food_tips_api.add_namespace(api.favorites_api.favorites_api_ns)
+food_tips_api.add_namespace(api.groups_api.groups_api_ns)
+food_tips_api.add_namespace(api.images_api.images_api_ns)
+food_tips_api.add_namespace(api.ingredients_api.ingredients_api_ns)
+food_tips_api.add_namespace(api.recipes_api.recipes_api_ns)
+food_tips_api.add_namespace(api.shopping_items_api.shopping_items_api_ns)
+food_tips_api.add_namespace(api.shopping_lists_api.shopping_lists_api_ns)
+food_tips_api.add_namespace(api.users_api.users_api_ns)
+

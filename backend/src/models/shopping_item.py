@@ -1,16 +1,15 @@
 from __future__ import annotations
+
 from models.base import Base, BaseManager
-from models.shopping_list import ShoppingLists
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm.properties import ForeignKey
 
 
-
 class ShoppingItems(Base):
     __tablename__ = "ShoppingItems"
     shoppingListID: Mapped[int] = mapped_column(
-        ForeignKey(ShoppingLists.ID, ondelete="CASCADE"), nullable=False
+        ForeignKey("ShoppingLists.ID", ondelete="CASCADE"), nullable=False
     )
     total: Mapped[int] = mapped_column(nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)

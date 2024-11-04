@@ -1,0 +1,11 @@
+# A path to a directory where all the images will be stored
+UPLOAD_DIR="/data"
+
+# A mysql root username
+DB_USERNAME=<root_username>
+
+# A mysql root password
+DB_PASSWORD=<root_password>
+
+# A mysql database name
+DB_NAME=<databse_name>
