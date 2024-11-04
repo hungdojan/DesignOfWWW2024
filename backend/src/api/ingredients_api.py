@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
 from models.ingredients import IngredientManager
-from utils import error_message
+from utils import error_message, response_ok
 
 ingredients_api_ns = Namespace(
     "Ingredients",
@@ -38,6 +38,18 @@ class IngredientsAPI(Resource):
 
         return ingredient.as_dict(), HTTPStatus.CREATED
 
+    @ingredients_api_ns.expect(ingred_mdl["view"])
+    @ingredients_api_ns.marshal_with(ingred_mdl["view"])
+    def patch(self):
+        data = request.get_json()
+        if not data.get("ID"):
+            return error_message("ID not provided.")
+        _id = data.pop("ID")
+        ingredient = IngredientManager.update_one(_id, **data)
+        if not ingredient:
+            return error_message("Ingredient not found.")
+        return ingredient.as_dict()
+
 
 @ingredients_api_ns.route("/<_id>")
 @ingredients_api_ns.doc(data={"_id": "Ingredient's ID."})
@@ -51,11 +63,6 @@ class IngredientAPI(Resource):
             _dict = ingredient.as_dict()
         return _dict, HTTPStatus.OK
 
-    @ingredients_api_ns.expect(ingred_mdl["view"])
-    @ingredients_api_ns.marshal_with(ingred_mdl["view"])
-    def patch(self, _id: str):
-        data = request.get_json()
-        ingredient = IngredientManager.update_one(_id, **data)
-        if not ingredient:
-            return error_message("Ingredient not found.")
-        return ingredient.as_dict()
+    def delete(self, _id: str):
+        IngredientManager.delete_by_id(_id)
+        return response_ok("OK")

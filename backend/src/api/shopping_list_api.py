@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
 from models.shopping_list import ShoppingListManager
-from utils import error_message
+from utils import error_message, response_ok
 
 shopping_lists_api_ns = Namespace(
     "ShoppingLists",
@@ -39,6 +39,18 @@ class ShoppingListsAPI(Resource):
         return shopping_list.as_dict(), HTTPStatus.CREATED
 
 
+    @shopping_lists_api_ns.expect(shop_list_mdl["view"])
+    @shopping_lists_api_ns.marshal_with(shop_list_mdl["view"])
+    def patch(self):
+        data = request.get_json()
+        if not data.get("ID"):
+            return error_message("ID not provided.")
+        _id = data.pop("ID")
+        shopping_list = ShoppingListManager.update_one(_id, **data)
+        if not shopping_list:
+            return error_message("ShoppingList not found.")
+        return shopping_list.as_dict()
+
 @shopping_lists_api_ns.route("/<_id>")
 @shopping_lists_api_ns.doc(data={"_id": "ShoppingList's ID."})
 class ShoppingListAPI(Resource):
@@ -51,11 +63,6 @@ class ShoppingListAPI(Resource):
             _dict = shopping_list.as_dict()
         return _dict, HTTPStatus.OK
 
-    @shopping_lists_api_ns.expect(shop_list_mdl["view"])
-    @shopping_lists_api_ns.marshal_with(shop_list_mdl["view"])
-    def patch(self, _id: str):
-        data = request.get_json()
-        shopping_list = ShoppingListManager.update_one(_id, **data)
-        if not shopping_list:
-            return error_message("ShoppingList not found.")
-        return shopping_list.as_dict()
+    def delete(self, _id: str):
+        ShoppingListManager.delete_by_id(_id)
+        return response_ok("OK")

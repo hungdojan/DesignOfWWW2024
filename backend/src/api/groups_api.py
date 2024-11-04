@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
 from models.groups import GroupManager
-from utils import error_message
+from utils import error_message, response_ok
 
 groups_api_ns = Namespace(
     "Groups", description="All endpoints related to groups.", path="/groups"
@@ -36,6 +36,18 @@ class GroupsAPI(Resource):
 
         return group.as_dict(), HTTPStatus.CREATED
 
+    @groups_api_ns.expect(group_mdl["view"])
+    @groups_api_ns.marshal_with(group_mdl["view"])
+    def patch(self):
+        data = request.get_json()
+        if not data.get("ID"):
+            return error_message("ID not provided.")
+        _id = data.pop("ID")
+        group = GroupManager.update_one(_id, **data)
+        if not group:
+            return error_message("Group not found.")
+        return group.as_dict()
+
 
 @groups_api_ns.route("/<_id>")
 @groups_api_ns.doc(data={"_id": "Group's ID."})
@@ -49,11 +61,6 @@ class GroupAPI(Resource):
             _dict = group.as_dict()
         return _dict, HTTPStatus.OK
 
-    @groups_api_ns.expect(group_mdl["view"])
-    @groups_api_ns.marshal_with(group_mdl["view"])
-    def patch(self, _id: str):
-        data = request.get_json()
-        group = GroupManager.update_one(_id, **data)
-        if not group:
-            return error_message("Group not found.")
-        return group.as_dict()
+    def delete(self, _id: str):
+        GroupManager.delete_by_id(_id)
+        return response_ok("OK")

@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
 from models.images import ImageManager
-from utils import error_message
+from utils import error_message, response_ok
 
 images_api_ns = Namespace(
     "Images", description="All endpoints related to images.", path="/images"
@@ -38,6 +38,17 @@ class ImagesAPI(Resource):
 
         return image.as_dict(), HTTPStatus.CREATED
 
+    @images_api_ns.expect(image_mdl["view"])
+    @images_api_ns.marshal_with(image_mdl["view"])
+    def patch(self):
+        data = request.get_json()
+        if not data.get("ID"):
+            return error_message("ID not provided.")
+        _id = data.pop("ID")
+        image = ImageManager.update_one(_id, **data)
+        if not image:
+            return error_message("Image not found.")
+        return image.as_dict()
 
 @images_api_ns.route("/<_id>")
 @images_api_ns.doc(data={"_id": "Image's ID."})
@@ -51,11 +62,6 @@ class ImageAPI(Resource):
             _dict = image.as_dict()
         return _dict, HTTPStatus.OK
 
-    @images_api_ns.expect(image_mdl["view"])
-    @images_api_ns.marshal_with(image_mdl["view"])
-    def patch(self, _id: str):
-        data = request.get_json()
-        image = ImageManager.update_one(_id, **data)
-        if not image:
-            return error_message("Image not found.")
-        return image.as_dict()
+    def delete(self, _id: str):
+        ImageManager.delete_by_id(_id)
+        return response_ok("OK")

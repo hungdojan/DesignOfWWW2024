@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from flask import Response, jsonify
+from flask import Response, jsonify, make_response
 from flask_restx.api import HTTPStatus
 import models.base
 
@@ -20,3 +20,6 @@ def preprocess_filter(_filter: dict, _cls: type[models.base.Base]) -> list:
         f"{_cls.__tablename__}.{k}" == v
         for k, v in allowed_columns(_filter, _cls).items()
     ]
+
+def response_ok(msg: str | dict) -> Response:
+    return make_response({"message": msg}, HTTPStatus.OK)

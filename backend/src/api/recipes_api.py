@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
 from models.recipes import RecipeManager
-from utils import error_message
+from utils import error_message, response_ok
 
 recipes_api_ns = Namespace(
     "Recipes", description="All endpoints related to recipes.", path="/recipes"
@@ -53,6 +53,18 @@ class RecipesAPI(Resource):
 
         return recipe.as_dict(), HTTPStatus.CREATED
 
+    @recipes_api_ns.expect(_model_view)
+    @recipes_api_ns.marshal_with(_model_view)
+    def patch(self):
+        data = request.get_json()
+        if not data.get("ID"):
+            return error_message("ID not provided")
+        _id = data.pop("ID")
+        recipe = RecipeManager.update_one(_id, **data)
+        if not recipe:
+            return error_message("Recipe not found.")
+        return recipe.as_dict()
+
 
 @recipes_api_ns.route("/<_id>")
 @recipes_api_ns.doc(data={"_id": "Recipe's ID."})
@@ -66,11 +78,6 @@ class RecipeAPI(Resource):
             _dict = recipe.as_dict()
         return _dict, HTTPStatus.OK
 
-    @recipes_api_ns.expect(_model_view)
-    @recipes_api_ns.marshal_with(_model_view)
-    def patch(self, _id: str):
-        data = request.get_json()
-        recipe = RecipeManager.update_one(_id, **data)
-        if not recipe:
-            return error_message("Recipe not found.")
-        return recipe.as_dict()
+    def delete(self, _id: str):
+        RecipeManager.delete_by_id(_id)
+        return response_ok("OK")
