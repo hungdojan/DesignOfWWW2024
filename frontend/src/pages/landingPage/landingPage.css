@@ -45,34 +45,47 @@
     font-style: italic;
 }
 
-/* Footer styles */
-.footer {
-    background-color: var(--my-dark-brown);
-    padding: 16px;
-    text-align: center;
-    color: #fff;
-}
-
-/* Link styles */
-.footer .link {
-    margin: 0 10px;
-    color: var(--my-light-brown);
-    text-decoration-line: none;
-}
-
 /* Search bar container */
 .search-bar-container {
     padding: 20px;
-    display: flex;
     justify-content: center;
+    max-width: 1000px;
+    width: 100%;
 }
 
 /* Search input styles */
 .search-input {
-    padding: 0px 5px;
+    background-color: white;
+    border-radius: 30px;
 }
 
 /* Search icon color */
 .search-bar-container .search-icon {
     color: var(--my-light-green);
+}
+
+.background-image {
+    align-items: center;
+    background-image: url('../../assets/recipe/eggs-looking-good.jpg');
+    background-position: center;
+    background-size: cover;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px;
+}
+
+.slogan {
+    font-size: 4em;
+    font-family: 'Lobster', cursive;
+    color: white;
+    text-align: left;
+    line-height: 1.2;
+    width: 100%; 
+    max-width: 1000px;
+}
+
+.highlight {
+    color: var(--my-light-green);
+    font-weight: bold;
 }

@@ -1,0 +1,49 @@
+/* Footer styles */
+.footer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 16px;
+    background-color: var(--my-light-brown);
+    color: #fff;
+}
+
+.footer .link {
+    color: var(--my-dark-brown);
+    text-decoration-line: none;
+    padding: 5px;
+}
+
+.footer .link:hover {
+    color: white;
+    background-color: var(--my-light-green);
+    border-radius: 20px;
+}
+
+.footer .footer-image {
+    flex: 1;
+    text-align: left;
+    margin: 0 20px;
+}
+
+.footer .footer-image img {
+    width: 100px;
+    height: auto;
+}
+
+.contact {
+    flex: 1;
+    text-align: left;
+    display: inline-block;
+}
+
+.contact .title {
+    font-weight: bold;
+}
+
+.design {
+    background-color: var(--my-dark-brown);
+    color: var(--my-light-brown);
+    padding: 10px;
+    text-align: center;
+}
