@@ -1,0 +1,56 @@
+/* Header styles */
+.header {
+    background-color: var(--my-light-blue);
+}
+
+/* Button styles */
+.header .nav-button {
+    color: white;
+    border-radius: 30px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.header .nav-button:hover {
+    color: black;
+    background-color: #70CDFF;
+}
+
+.header .nav-button .dropdown-icon {
+    color: black;
+    padding: 0 0 3.4px 0;
+}
+
+.header .header-name {
+    flex-grow: 1;
+    text-decoration: none;
+    color: white;
+    margin-top: 6px;
+}
+
+.mobile-nav {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 5px 0;    
+    }
+
+    .header .mobile-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%; 
+    }
+
+    .header .mobile-nav .logo-img {
+        height: 50px;
+        width: auto;
+        cursor: pointer;
+    }
+
+    .header .menu-button {
+        color: white;
+    }
+}

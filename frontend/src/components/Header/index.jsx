@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
 import logo from "../../assets/logo-tmp.png";
 import {
   AppBar,
@@ -8,15 +9,19 @@ import {
   Button,
   Menu,
   MenuItem,
+  IconButton,
 } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import "./Header.css";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userName, setUserName] = useState(null);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery("(max-width: 600px)");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,68 +42,115 @@ const Header = () => {
   return (
     <AppBar position="static" className="header">
       <Toolbar>
-        <img
+        {/* Desktop Navigation */}
+        {!isMobile && (
+          <>
+            <Typography
+              variant="h4"
+              component="a"
+              href="/"
+              className="header-name"
+            >
+              Food Tips
+            </Typography>
+            <Button
+              variant="text"
+              className="nav-button"
+              onClick={handleClick}
+              endIcon={<IoIosArrowDropdown className="dropdown-icon" />}
+            >
+              Recipes
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              className="nav-menu"
+              onClose={handleClose}
+            >
+              <MenuItem onClick={() => navigate("/recipe/new")}>
+                Add Recipe
+              </MenuItem>
+              <MenuItem onClick={() => navigate("/recipe/my_list")}>
+                My Recipes
+              </MenuItem>
+              <MenuItem onClick={() => navigate("/recipe/favorite")}>
+                Favorite Recipes
+              </MenuItem>
+            </Menu>
+            <Button
+              variant="text"
+              className="nav-button"
+              onClick={() => navigate("/shop_list")}
+            >
+              Shopping List
+            </Button>
+            {!userName ? (
+              <GoogleLogin
+                onSuccess={handleLoginSuccess}
+                onError={() => {
+                  console.log("Login Failed");
+                }}
+              />
+            ) : (
+              <Button variant="text" className="nav-button">
+                Logout {userName}
+              </Button>
+            )}
+        </>
+      )}
+
+      {/* Mobile Navigation */}
+      {isMobile && (
+        <div className="mobile-nav">
+          <img
           src={logo}
           alt="Logo"
-          style={{ height: "50px", marginRight: "16px" }}
+          className="logo-img"
           onClick={() => {
             navigate("/");
           }}
-        />
-        <Typography
-          variant="h4"
-          component="a"
-          href="/"
-          sx={{ flexGrow: 1, textDecoration: "none", color: "inherit" }}
-        >
-          Food Tips
-        </Typography>
-        <Button
-          variant="text"
-          className="nav-button"
-          onClick={handleClick}
-          endIcon={<IoIosArrowDropdown className="dropdown-icon" />}
-        >
-          Recipes
-        </Button>
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          className="nav-menu"
-          onClose={handleClose}
-        >
-          {/* <MenuItem onClick={handleClose} className="nav-item">
-            Find Recipes
-          </MenuItem> */}
-          <MenuItem onClick={() => navigate("/recipe/new")}>
-            Add Recipe
-          </MenuItem>
-          <MenuItem onClick={() => navigate("/recipe/my_list")}>
-            My Recipes
-          </MenuItem>
-          <MenuItem onClick={() => navigate("/recipe/favorite")}>
-            Favorite Recipes
-          </MenuItem>
-        </Menu>
-        <Button
-          variant="text"
-          className="nav-button"
-          onClick={() => navigate("/shop_list")}
-        >
-          Shopping List
-        </Button>
-        {!userName ? (
-          <GoogleLogin
-            onSuccess={handleLoginSuccess}
-            onError={() => {
-              console.log("Login Failed");
-            }}
           />
-        ) : (
-          <Button variant="text" className="nav-button">
-            Logout {userName}
-          </Button>
-        )}
+          <IconButton onClick={handleClick} className="menu-button">
+            <MenuIcon />
+          </IconButton>
+
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={() => navigate("/recipe/new")}>
+              Add Recipe
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/recipe/my_list")}>
+              My Recipes
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/recipe/favorite")}>
+              Favorite Recipes
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/shop_list")}>
+              Shopping List
+            </MenuItem>
+
+            {!userName ? (
+              <MenuItem>
+                <GoogleLogin
+                  onSuccess={handleLoginSuccess}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                />
+              </MenuItem>
+            ) : (
+              <MenuItem>
+                <Button variant="text" className="nav-button" onClick={() => setUserName(null)}>
+                  Log Out {userName}
+                </Button>
+              </MenuItem>
+            )}
+          </Menu>
+        </div>
+      )}
       </Toolbar>
     </AppBar>
   );
