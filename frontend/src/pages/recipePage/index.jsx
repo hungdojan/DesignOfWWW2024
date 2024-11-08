@@ -56,40 +56,31 @@ const RecipePage = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {/* Header should span full width */}
-      <Box sx={{ width: "100%", position: "relative" }}>
-        <Header />
-      </Box>
+      <Header />
 
       {/* Main Content */}
-      <Container maxWidth="md" sx={{ flex: 1, marginTop: 4 }}>
-        <Typography variant="h4" component="div" className="my-recipes-title" textAlign="center">
-          {recipe.title}
-        </Typography>
-
-        <Card sx={{ boxShadow: 3, marginTop: 4 }}>
+      <Container maxWidth="md" className="recipe-box">
+        <Card sx={{ boxShadow: 3, marginTop: 1 }}>
+          <Typography variant="h4" component="div" className="my-recipes-title" textAlign="center">
+            {recipe.title}
+          </Typography>
+          
           {/* Recipe Image Section */}
-          <Box sx={{ display: "flex", justifyContent: "center", padding: 2 }}>
+          <Box className="recipe-image">
             <CardMedia
               component="img"
               image={recipe.image}
               alt={recipe.title}
-              sx={{
-                width: "80%",
-                height: { xs: 250, sm: 350, md: 450 },
-                objectFit: "cover",
-                borderRadius: 1,
-              }}
             />
           </Box>
 
           {/* Recipe Content Section */}
-          <CardContent sx={{ padding: { xs: 2, sm: 3, md: 4 } }}>
+          <CardContent>
             {/* Ingredients Section */}
-            <Typography variant="h6" component="div" gutterBottom>
+            <Typography variant="h5" component="div" className="subtitle">
               Ingredients
             </Typography>
-            <Stack component="ul" spacing={1} sx={{ paddingLeft: 2, margin: 0 }}>
+            <Stack component="ul" spacing={1} className="ingredients-list">
               {recipe.ingredients.map((ingredient, index) => (
                 <Box component="li" key={index}>
                   <Typography variant="body1">{ingredient}</Typography>
@@ -98,10 +89,10 @@ const RecipePage = () => {
             </Stack>
 
             {/* Instructions Section */}
-            <Typography variant="h6" component="div" gutterBottom sx={{ marginTop: 2 }}>
+            <Typography variant="h5" component="div" className="subtitle">
               Instructions
             </Typography>
-            <Stack component="ol" spacing={1} sx={{ paddingLeft: 3, margin: 0 }}>
+            <Stack component="ol" spacing={1} className="instruction-list">
               {recipe.instructions.map((instruction, index) => (
                 <Box component="li" key={index}>
                   <Typography variant="body1">{instruction}</Typography>
@@ -110,16 +101,11 @@ const RecipePage = () => {
             </Stack>
 
             {/* Edit Button */}
-            <Box sx={{ marginTop: 4, display: "flex", justifyContent: "center" }}>
+            <Box>
               <Button
                 variant="outlined"
                 startIcon={<MdEdit />}
                 className="edit-button"
-                sx={{
-                  fontWeight: "bold",
-                  textTransform: "none",
-                  padding: "8px 16px",
-                }}
               >
                 Edit Recipe
               </Button>
