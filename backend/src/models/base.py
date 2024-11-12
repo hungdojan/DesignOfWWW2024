@@ -21,6 +21,10 @@ class Base(DeclarativeBase, MappedAsDataclass):
     def get_columns():
         raise NotImplemented()
 
+    @classmethod
+    def get_columns_extended(cls):
+        return cls.get_columns()
+
 
 T = TypeVar("T", bound=Base)
 
@@ -35,43 +39,78 @@ class BaseManager(ABC, Generic[T]):
 
     @classmethod
     def query_all(cls) -> list[T]:
-        groups = models.DB.session.execute(select(cls._model_class)).scalars().all()
-        return [g for g in groups]
+        objs = models.DB.session.execute(select(cls._model_class)).scalars().all()
+        return [g for g in objs]
 
     @classmethod
     def query_by_id(cls, _id: str) -> Optional[T]:
         return models.DB.session.get(cls._model_class, _id)
 
     @classmethod
+    def query_by_many_ids(cls, _ids: list[str]) -> list[T]:
+        objs = (
+            models.DB.session.execute(
+                select(cls._model_class).where(cls._model_class.ID.in_(_ids))
+            )
+            .scalars()
+            .all()
+        )
+        return [o for o in objs]
+
+    @classmethod
     def query_by_filter(cls, **_filter) -> list[T]:
         _filt = preprocess_filter(_filter, cls._model_class)
-        groups = (
+        objs = (
             models.DB.session.execute(select(cls._model_class).where(and_(*_filt)))
             .scalars()
             .all()
         )
-        return [g for g in groups]
+        return [o for o in objs]
 
     @classmethod
     def insert_one(cls, **args) -> T:
         cols = allowed_columns(args, cls._model_class)
-        cols.pop("ID", None)
-        group = cls._model_class(ID=str(uuid4()), **args)
+        _id = cols.pop("ID", None)
+        if not _id:
+            _id = uuid4()
+        obj = cls._model_class(ID=str(_id), **cols)
 
-        models.DB.session.add(group)
+        models.DB.session.add(obj)
         models.DB.session.commit()
-        return group
+        return obj
+
+    @classmethod
+    def insert_multiple_obj(cls, lof_obj: list[T]):
+        models.DB.session.bulk_save_objects(lof_obj)
+        models.DB.session.commit()
 
     @classmethod
     def update_one(cls, _id: str, **args) -> Optional[T]:
-        group = cls.query_by_id(_id)
-        if not group:
+        obj = cls.query_by_id(_id)
+        if not obj:
             return None
         data = allowed_columns(args, cls._model_class)
         for k, v in data.items():
-            setattr(group, k, v)
+            setattr(obj, k, v)
         models.DB.session.commit()
-        return group
+        return obj
+
+    @classmethod
+    def update_obj(cls, obj: T, **args) -> T:
+        data = allowed_columns(args, cls._model_class)
+        for k, v in data.items():
+            setattr(obj, k, v)
+        models.DB.session.commit()
+        return obj
+
+    @classmethod
+    def _update_db(cls) -> None:
+        models.DB.session.commit()
+
+    @classmethod
+    def delete_obj(cls, obj: T) -> None:
+        models.DB.session.delete(obj)
+        models.DB.session.commit()
 
     @classmethod
     def delete_by_id(cls, _id: str) -> None:

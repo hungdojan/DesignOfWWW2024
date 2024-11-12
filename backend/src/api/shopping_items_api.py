@@ -1,8 +1,7 @@
-from flask import request
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
 from models.shopping_item import ShoppingItemManager
-from utils import error_message, response_ok
+from utils import error_message, message_response_dict, response_ok
 
 shopping_items_api_ns = Namespace(
     "ShoppingItems",
@@ -14,10 +13,9 @@ shop_item_mdl = {
     "new": shopping_items_api_ns.model(
         "ShoppingItemNew",
         {
-            "shoppingListID": fields.String,
             "total": fields.Integer,
             "name": fields.String,
-            "completed": fields.Boolean,
+            "completed": fields.Boolean(default=False),
         },
     ),
     "view": shopping_items_api_ns.model(
@@ -34,50 +32,57 @@ shop_item_mdl = {
 
 
 @shopping_items_api_ns.route("/")
+@shopping_items_api_ns.deprecated
 class ShoppingItemsAPI(Resource):
 
     @shopping_items_api_ns.marshal_list_with(shop_item_mdl["view"])
     def get(self):
-        # TODO: user query
         return [g.as_dict() for g in ShoppingItemManager.query_all()], HTTPStatus.OK
-
-    @shopping_items_api_ns.expect(shop_item_mdl["new"])
-    @shopping_items_api_ns.marshal_with(shop_item_mdl["view"])
-    def post(self):
-        data = request.get_json()
-
-        try:
-            shopping_item = ShoppingItemManager.insert_one(name=data["name"])
-        except TypeError:
-            return error_message("Missing name parameter")
-
-        return shopping_item.as_dict(), HTTPStatus.CREATED
-
-    @shopping_items_api_ns.expect(shop_item_mdl["view"])
-    @shopping_items_api_ns.marshal_with(shop_item_mdl["view"])
-    def patch(self):
-        data = request.get_json()
-        if not data.get("ID"):
-            return error_message("ID not provided.")
-        _id = data.pop("ID")
-        shopping_item = ShoppingItemManager.update_one(_id, **data)
-        if not shopping_item:
-            return error_message("ShoppingItem not found.")
-        return shopping_item.as_dict()
 
 
 @shopping_items_api_ns.route("/<_id>")
 @shopping_items_api_ns.doc(data={"_id": "ShoppingItem's ID."})
 class ShoppingItemAPI(Resource):
 
-    @shopping_items_api_ns.marshal_with(shop_item_mdl["view"])
+    @shopping_items_api_ns.response(HTTPStatus.OK, "Success", shop_item_mdl["view"])
+    @shopping_items_api_ns.doc(description="Retrieve a shopping item.")
+    @shopping_items_api_ns.response(
+        **message_response_dict("Shopping item not found.", "Shopping item not found.")
+    )
     def get(self, _id: str):
-        shopping_item = ShoppingItemManager.query_by_id(_id)
-        _dict = {}
-        if shopping_item:
-            _dict = shopping_item.as_dict()
-        return _dict, HTTPStatus.OK
+        # TODO: require auth
+        shop_item = ShoppingItemManager.query_by_id(_id)
+        if not shop_item:
+            return error_message("Shopping item not found.")
+        return shop_item.as_dict()
 
+    @shopping_items_api_ns.expect(shop_item_mdl["new"])
+    @shopping_items_api_ns.response(HTTPStatus.OK, "Success", shop_item_mdl["view"])
+    @shopping_items_api_ns.doc(description="Update a shopping item.")
+    @shopping_items_api_ns.response(
+        **message_response_dict("Shopping item not found.", "Shopping item not found.")
+    )
+    def patch(self, _id: str):
+        # TODO: require auth
+        data = shopping_items_api_ns.payload
+        shop_item = ShoppingItemManager.query_by_id(_id)
+        if not shop_item:
+            return error_message("Shopping item not found.")
+
+        shop_item = ShoppingItemManager.update_obj(shop_item, **data)
+        return shop_item.as_dict()
+
+    @shopping_items_api_ns.doc(description="Delete a shopping item.")
+    @shopping_items_api_ns.response(
+        **message_response_dict(
+            "Operation result.", "Shopping item group_id deleted.", HTTPStatus.OK
+        )
+    )
     def delete(self, _id: str):
-        ShoppingItemManager.delete_by_id(_id)
-        return response_ok("OK")
+        # TODO: require auth
+        shop_item = ShoppingItemManager.query_by_id(_id)
+        if not shop_item:
+            return response_ok("Nothing deleted.")
+
+        ShoppingItemManager.delete_obj(shop_item)
+        return response_ok(f"Shopping item {shop_item.ID} deleted.")
