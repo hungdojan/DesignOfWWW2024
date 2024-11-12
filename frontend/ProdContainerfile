@@ -1,0 +1,8 @@
+FROM docker.io/library/node:latest
+
+WORKDIR /design_of_www
+COPY ./ /design_of_www
+RUN npm install
+EXPOSE 3000
+
+CMD ["npm", "start"]

@@ -1,0 +1,94 @@
+name: food-tips
+
+services:
+  database:
+    build:
+      context: ./config/mariadb/
+      dockerfile: ProdContainerfile
+    environment:
+      # use `mysql -u${MARIADB_ROOT_USERNAME} -p${MARIADB_ROOT_PASSWORD} ${MARIADB_DATABASE}`
+      # to connect to the database inside container
+      MARIADB_ROOT_USERNAME: "${DB_USERNAME}"
+      MARIADB_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MARIADB_DATABASE: "${DB_NAME}"
+    networks:
+      - db_net
+    ports:
+      - "3306:3306"
+    volumes:
+      # uncomment for persistent data
+      - db_volume:/var/lib/mysql:z
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "-u${DB_USERNAME}",
+          "-p${DB_PASSWORD}",
+          "ping",
+          "-h",
+          "localhost",
+        ]
+      timeout: 2s
+      retries: 100
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: ProdContainerfile
+    depends_on:
+      database:
+        condition: service_healthy
+        restart: true
+    environment:
+      UPLOAD_DIR: "${UPLOAD_DIR}"
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      DB_NAME: "${DB_NAME}"
+    networks:
+      - fe_net
+      - db_net
+    ports:
+      - "5000:5000"
+    restart: on-failure
+    volumes:
+      # - ./backend/:/design_of_www:z
+      # set the host machine target
+      # - <HOST_MACHINE_TARGET>:<CONTAINER_TARGET>:z
+      - ./data:${UPLOAD_DIR}:z
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: ProdContainerfile
+    depends_on:
+      - backend
+    environment: {}
+    networks:
+      - fe_net
+    ports:
+      - "3000:3000"
+    restart: on-failure
+    volumes: []
+      # - ./frontend/:/design_of_www:z
+
+  nginx_proxy:
+    build:
+      context: ./config/nginx/
+      dockerfile: Containerfile
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - fe_net
+    ports:
+      - "8080:80"
+    volumes: []
+      # - ./config/nginx/nginx-conf.d/:/etc/nginx/conf.d/:z
+
+networks:
+  db_net:
+  fe_net:
+
+volumes:
+  db_volume:
