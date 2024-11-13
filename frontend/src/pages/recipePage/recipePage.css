@@ -53,7 +53,7 @@
     color: var(--my-dark-brown);
 }
 
-.recipe-box .edit-button {
+.recipe-box button {
     background-color: whitesmoke;
     border-radius: 30px;
     color: var(--my-dark-brown);
@@ -67,5 +67,10 @@
 
 .recipe-box .edit-button:hover {
     background-color: var(--my-light-blue);
+    color: whitesmoke;
+}
+
+.recipe-box .delete-button:hover {
+    background-color: red;
     color: whitesmoke;
 }

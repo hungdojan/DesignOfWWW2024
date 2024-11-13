@@ -11,8 +11,6 @@ import {
   Button,
 } from "@mui/material";
 import "./favoriteRecipePage.css";
-import { PiCookingPotFill } from "react-icons/pi";
-import { MdEdit } from "react-icons/md";
 import FoodCard from "../../components/FoodCard";
 
 const FavoriteRecipesPage = () => {
@@ -23,7 +21,7 @@ const FavoriteRecipesPage = () => {
     <>
       <Header />
       <Typography variant="h4" className="my-recipes">
-        Favorite Recipes <PiCookingPotFill class="recipe-icon" />
+        Favorite Recipes
       </Typography>
       {/* Main Content */}
       <Container maxWidth="md">

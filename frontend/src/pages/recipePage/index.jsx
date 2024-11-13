@@ -13,6 +13,7 @@ import {
   Stack,
 } from "@mui/material";
 import { MdEdit } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 import "./recipePage.css";
 import salmonImage from '../../assets/recipe/salmon.jpg';
 
@@ -108,6 +109,16 @@ const RecipePage = () => {
                 className="edit-button"
               >
                 Edit Recipe
+              </Button>
+            </Box>
+            {/* Delete Button */}
+            <Box>
+              <Button
+                variant="outlined"
+                startIcon={<MdDelete />}
+                className="delete-button"
+              >
+                Delete Recipe
               </Button>
             </Box>
           </CardContent>

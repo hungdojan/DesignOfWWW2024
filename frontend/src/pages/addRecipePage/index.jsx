@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import {
@@ -11,7 +11,6 @@ import {
   Button,
 } from "@mui/material";
 import "./addRecipePage.css";
-import { PiCookingPotFill } from "react-icons/pi";
 import { MdEdit } from "react-icons/md";
 
 const AddRecipePage = () => {
@@ -23,10 +22,36 @@ const AddRecipePage = () => {
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
 
+  const titleRef = useRef(null);
+  const ingredientsRef = useRef(null);
+  const descriptionRef = useRef(null);
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    setImage(file);
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        const preview = document.getElementById('image-preview');
+        preview.src = reader.result;
+        preview.style.display = 'block';
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const inputs = document.querySelectorAll('.input-field');
+
+    inputs.forEach(input => {
+      input.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+      });
+    });
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,13 +73,22 @@ const AddRecipePage = () => {
     setIngredients('');
     setDescription('');
     setImage(null);
+
+    const preview = document.getElementById('image-preview');
+    if (preview) {
+      preview.style.display = 'none';
+    }
+
+    if (titleRef.current) titleRef.current.style.height = 'auto';
+    if (ingredientsRef.current) ingredientsRef.current.style.height = 'auto';
+    if (descriptionRef.current) descriptionRef.current.style.height = 'auto';
   };
 
   return (
     <>
       <Header />
       <Typography variant="h4" className="my-recipes">
-        New Recipes <PiCookingPotFill class="recipe-icon" />
+        Add Recipe <MdEdit class="recipe-icon" />
       </Typography>
       <Container className="form-container">
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="add-form">
@@ -67,6 +101,7 @@ const AddRecipePage = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Set title"
+              ref={titleRef}
               required
             />
           </div>
@@ -79,6 +114,7 @@ const AddRecipePage = () => {
               className="input-field"
               onChange={(e) => setIngredients(e.target.value)}
               placeholder="List ingredients"
+              ref={ingredientsRef}
               required
             />
           </div>
@@ -91,11 +127,12 @@ const AddRecipePage = () => {
               className="input-field"
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe the recipe"
+              ref={descriptionRef}
               required
             />
           </div>
 
-          <div className="one-item">
+          <div className="image-container">
             <label htmlFor="image">Image</label>
             <input
               type="file"
@@ -104,7 +141,10 @@ const AddRecipePage = () => {
               onChange={handleImageUpload}
               accept="image/*"
             />
+            <label htmlFor="image" className="upload-btn">+</label>
           </div>
+
+          <img id="image-preview" src="" alt="Image Preview" className="image-preview" />
 
           <button type="submit" className="add-button">Add Recipe</button>
         </form>
