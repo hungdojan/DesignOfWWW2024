@@ -34,14 +34,14 @@
 
 @media (max-width: 600px) {
     .header {
-        padding: 5px 0;    
+        padding: 5px 0;
     }
 
     .header .mobile-nav {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        width: 100%; 
+        width: 100%;
     }
 
     .header .mobile-nav .logo-img {

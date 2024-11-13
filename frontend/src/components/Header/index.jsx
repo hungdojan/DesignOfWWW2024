@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 import logo from "../../assets/logo-tmp.png";
@@ -22,6 +22,30 @@ const Header = () => {
   const [userName, setUserName] = useState(null);
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 600px)");
+  const [scrollingDown, setScrollingDown] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Determine if the user is scrolling down or up
+      if (currentScrollY > lastScrollY) {
+        setScrollingDown(true);  // Scrolling down
+      } else {
+        setScrollingDown(false); // Scrolling up
+      }
+
+      setLastScrollY(currentScrollY); // Update last scroll position
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Cleanup event listener on unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -40,8 +64,10 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static" className="header">
-      <Toolbar>
+    <AppBar position="sticky" className="header">
+      <Toolbar sx={{
+          paddingTop: isMobile ? (scrollingDown ? '16px' : '0x') : '0px',
+        }}>
         {/* Desktop Navigation */}
         {!isMobile && (
           <>

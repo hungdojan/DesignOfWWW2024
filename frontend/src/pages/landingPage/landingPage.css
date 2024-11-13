@@ -2,6 +2,10 @@
     justify-content: center;
 }
 
+.box-grid .recipe-item {
+    cursor: pointer;
+}
+
 /* Recommended card styles */
 .box-grid .recommended-card {
     background-color: var(--my-light-green);

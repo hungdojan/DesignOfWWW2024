@@ -51,7 +51,6 @@ const LandingPage = () => {
     <div>
       <Header />
       <div className="background-image">
-        {/* Search Bar (Outside Header) */}
         <div className="search-bar-container">
           <TextField
             variant="outlined"
@@ -83,7 +82,7 @@ const LandingPage = () => {
       <Container maxWidth="md">
         <Grid2 container spacing={2} className="box-grid">
           {recipes.map((recipe) => (
-            <Grid2 item key={recipe.id}>
+            <Grid2 item key={recipe.id} className="recipe-item">
               <FoodCard
                 img_src={recipe.image}
                 alt={recipe.alt}
