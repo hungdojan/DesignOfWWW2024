@@ -4,7 +4,7 @@ services:
   database:
     build:
       context: ./config/mariadb/
-      dockerfile: Containerfile
+      dockerfile: ProdContainerfile
     environment:
       # use `mysql -u${MARIADB_ROOT_USERNAME} -p${MARIADB_ROOT_PASSWORD} ${MARIADB_DATABASE}`
       # to connect to the database inside container
@@ -17,8 +17,7 @@ services:
       - "3306:3306"
     volumes:
       # uncomment for persistent data
-      # - db_volume:/var/lib/mysql:z
-      - ./config/mariadb/init_scripts/:/docker-entrypoint-initdb.d:z
+      - db_volume:/var/lib/mysql:z
     healthcheck:
       test:
         [
@@ -36,7 +35,7 @@ services:
   backend:
     build:
       context: ./backend/
-      dockerfile: Containerfile
+      dockerfile: ProdContainerfile
     depends_on:
       database:
         condition: service_healthy
@@ -53,7 +52,7 @@ services:
       - "5000:5000"
     restart: on-failure
     volumes:
-      - ./backend/:/design_of_www:z
+      # - ./backend/:/design_of_www:z
       # set the host machine target
       # - <HOST_MACHINE_TARGET>:<CONTAINER_TARGET>:z
       - ./data:${UPLOAD_DIR}:z
@@ -61,7 +60,7 @@ services:
   frontend:
     build:
       context: ./frontend/
-      dockerfile: Containerfile
+      dockerfile: ProdContainerfile
     depends_on:
       - backend
     environment: {}
@@ -70,8 +69,8 @@ services:
     ports:
       - "3000:3000"
     restart: on-failure
-    volumes:
-      - ./frontend/:/design_of_www:z
+    volumes: []
+      # - ./frontend/:/design_of_www:z
 
   nginx_proxy:
     build:
@@ -84,9 +83,8 @@ services:
       - fe_net
     ports:
       - "8080:80"
-    volumes:
-      - ./config/nginx/nginx-conf.d/:/etc/nginx/conf.d/:z
-
+    volumes: []
+      # - ./config/nginx/nginx-conf.d/:/etc/nginx/conf.d/:z
 
 networks:
   db_net:

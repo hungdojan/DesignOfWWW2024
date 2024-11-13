@@ -1,0 +1,5 @@
+FROM docker.io/library/mariadb:10.6
+
+COPY ./init_scripts/ /docker-entrypoint-initdb.d/
+EXPOSE 3306
+
