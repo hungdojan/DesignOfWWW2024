@@ -7,3 +7,125 @@
     margin: 0;
     padding: 20px;
 }
+  
+.main-layout {
+    display: flex;
+}
+
+.sidebar {
+    max-width: 250px;
+    margin: 8px;
+    padding: 12px;
+    width: 100%;
+}
+
+.sidebar h6 {
+    border-bottom: 2px dashed var(--my-light-brown);
+    color: var(--my-dark-brown);
+}
+
+.sidebar .list-item {
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 8px;
+    background-color: #f5f5f5;
+    color: black;
+    cursor: pointer;
+}
+
+.sidebar .list-item.selected {
+    background-color: var(--my-light-green);
+    color: white;
+}
+
+.sidebar .new-list-btn {
+    background-color: var(--my-light-green);
+    color: white;
+    border-radius: 30px;
+    border: none;
+}
+
+.sidebar .new-list-btn:hover {
+    background-color: var(--my-light-blue);
+}
+
+.shopping-list-display {
+    flex-grow: 1;
+    margin: 8px;
+}
+
+.list-box {
+    padding: 16px;
+}
+
+.shopping-list-display .list-title {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--my-ligh-blue);
+}
+
+.list-box .add-item-input {
+    border-radius: 10px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.list-box .items-container {
+    padding: 8px;
+    border: 2px solid var(--my-light-green);
+    border-radius: 10px;
+}
+
+.list-box .item-row {
+    margin-bottom: 8px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.list-box .item-text {
+    min-width: 150px;
+    font-style: italic;
+}
+
+.list-box .item-actions {
+    display: flex;
+    align-items: center;
+}
+
+.list-box .action-button {
+    padding: 8px;
+    color: var(--my-light-brown);
+} 
+
+@media (max-width: 768px) {
+    .main-container {
+        padding: 10px !important;
+    }
+
+    .main-layout {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-width: none;
+        padding: 10px;
+        margin: auto;
+        box-sizing: border-box;
+    }
+
+    .shopping-list-display {
+        width: 100%;
+        margin: 16px auto;
+    }
+
+    .list-box {
+        padding: 12px;
+    }
+
+    .sidebar .new-list-btn {
+        width: 100%;
+    }
+}

@@ -124,11 +124,7 @@ const RecipePage = () => {
           </CardContent>
         </Card>
       </Container>
-
-      {/* Footer should span full width */}
-      <Box sx={{ width: "100%", position: "relative", marginTop: "auto" }}>
-        <Footer />
-      </Box>
+      <Footer />
     </Box>
   );
 };
