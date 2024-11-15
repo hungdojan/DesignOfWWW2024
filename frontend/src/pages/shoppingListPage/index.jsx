@@ -30,6 +30,7 @@ const ShoppingListPage = () => {
       items: [{ id: 1, name: "Notebook", quantity: 5 }],
     },
   ]);
+  const [newItemName, setNewItemName] = useState("");
   const [currentListId, setCurrentListId] = useState(1);
   const [isEditingListTitle, setIsEditingListTitle] = useState(false);
   const [editedListTitle, setEditedListTitle] = useState("");
@@ -164,13 +165,30 @@ const ShoppingListPage = () => {
                   </IconButton>
                 </Typography>
               )}
-              <TextField
-                placeholder="Add new item..."
-                className="add-item-input"
-                onKeyDown={(e) =>
-                  e.key === "Enter" && addItem(list.id, e.target.value)
-                }
-              />
+              <Box className="add-container">
+                <TextField
+                  placeholder="Add new item..."
+                  className="add-item-input"
+                  value={newItemName}
+                  onChange={(e) => setNewItemName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      addItem(list.id, newItemName);
+                      setNewItemName("");
+                    }
+                  }}
+                />
+                <Button
+                  className="add-button"
+                  onClick={() => {
+                    addItem(list.id, newItemName);
+                    setNewItemName("");
+                  }}
+                >
+                  +
+                </Button>
+              </Box>
+              {list.items.length > 0 && (
               <Paper variant="outlined" className="items-container">
                 <List>
                   {list.items.map((item) => (
@@ -207,6 +225,7 @@ const ShoppingListPage = () => {
                   ))}
                 </List>
               </Paper>
+              )}
             </Box>
             ))}
         </Box>

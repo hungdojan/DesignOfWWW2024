@@ -31,6 +31,9 @@
     background-color: #f5f5f5;
     color: black;
     cursor: pointer;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }
 
 .sidebar .list-item.selected {
@@ -58,22 +61,45 @@
     padding: 16px;
 }
 
-.shopping-list-display .list-title {
-    display: flex;
-    align-items: center;
+.list-box .list-title {
     cursor: pointer;
     color: var(--my-ligh-blue);
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
+.list-box .add-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .list-box .add-item-input {
     border-radius: 10px;
-    margin-bottom: 8px;
     width: 100%;
+    border: 2px solid var(--my-light-green);
+    box-sizing: border-box;
+}
+
+.list-box .add-button {
+    display: inline-block;
+    border-radius: 10px;
+    background-color: var(--my-light-green);
+    color: white;
+    font-size: 26px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    max-width: 50px;
+    height: auto;
 }
 
 .list-box .items-container {
     padding: 8px;
-    border: 2px solid var(--my-light-green);
+    border: 2px solid var(--my-light-blue);
+    background-color: #d9effa;
     border-radius: 10px;
 }
 
@@ -81,12 +107,15 @@
     margin-bottom: 8px;
     padding: 8px 16px;
     border-radius: 10px;
-    border: 1px solid #ddd;
+    background-color: white;
 }
 
 .list-box .item-text {
     min-width: 150px;
     font-style: italic;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 60%;
 }
 
 .list-box .item-actions {

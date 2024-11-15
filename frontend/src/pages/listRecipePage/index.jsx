@@ -63,13 +63,13 @@ const ListRecipePage = () => {
 
   const fetchAllRecipes = () => {
     axios
-      .get('/api/recipes')
+      .get('/api/recipes/')
       .then((resp) => {
         // fetch images
         Promise.all(
           resp.data.map((recipe) =>
             axios
-              .get(`/api/recipes/${recipe.ID}/image`, { responseType: 'blob' })
+              .get(`/api/recipes/${recipe.ID}/image/`, { responseType: 'blob' })
               .then((imageResp) => {
                 const imageUrl = URL.createObjectURL(imageResp.data);
                 return { ...recipe, imageUrl };
