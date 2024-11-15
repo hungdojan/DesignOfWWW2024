@@ -148,6 +148,7 @@ const ShoppingListPage = () => {
                   onKeyDown={(e) => e.key === "Enter" && saveListTitle()}
                   fullWidth
                   autoFocus
+                  gutterBottom
                 />
               ) : (
                 <Typography

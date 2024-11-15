@@ -2,18 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import FoodCard from "../../components/FoodCard";
 import {
   Typography,
   Container,
-  Card,
-  CardContent,
-  CardMedia,
   Grid2,
-  Button,
 } from "@mui/material";
 import "./listRecipePage.css";
 import { PiCookingPotFill } from "react-icons/pi";
-import FoodCard from "../../components/FoodCard";
 
 const ListRecipePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -97,7 +93,6 @@ const ListRecipePage = () => {
       <Typography variant="h4" className="my-recipes">
         My Recipes <PiCookingPotFill class="recipe-icon" />
       </Typography>
-      {/* Main Content */}
       <Container maxWidth="md">
         <Grid2 container spacing={2} className="box-grid">
           {recipes.map((recipe) => (

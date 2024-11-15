@@ -7,12 +7,13 @@
     margin: 0;
     padding: 20px;
 }
-  
+
 .main-layout {
     display: flex;
 }
 
 .sidebar {
+    min-width: 250px;
     max-width: 250px;
     margin: 8px;
     padding: 12px;
@@ -55,6 +56,8 @@
 .shopping-list-display {
     flex-grow: 1;
     margin: 8px;
+    width: 100%;
+    overflow: hidden;
 }
 
 .list-box {
@@ -115,7 +118,7 @@
     font-style: italic;
     overflow-wrap: break-word;
     white-space: normal;
-    max-width: 60%;
+    max-width: 75%;
 }
 
 .list-box .item-actions {
@@ -126,7 +129,7 @@
 .list-box .action-button {
     padding: 8px;
     color: var(--my-light-brown);
-} 
+}
 
 @media (max-width: 768px) {
     .main-container {
@@ -152,6 +155,10 @@
 
     .list-box {
         padding: 12px;
+    }
+
+    .list-box .item-text {
+        max-width: 60%;
     }
 
     .sidebar .new-list-btn {

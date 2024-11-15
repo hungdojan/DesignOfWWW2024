@@ -1,15 +1,44 @@
 /* Recommended card styles */
 .food-card {
     background-color: var(--my-light-green);
-    color: #fff;
     margin: 16px;
-    width: 220px;
+    width: 230px;
 }
 
-/* Card content text alignment */
 .card-content {
     background-color: var(--my-light-green);
-    color: #fff;
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     font-style: italic;
+}
+
+.card-content .recipe-title {
+    color: white;
+    flex-grow: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    text-decoration: none;
+    text-align: left;
+}
+
+.card-content button {
+    background-color: whitesmoke;
+    color: var(--my-dark-brown);
+    font-size: 24px;
+    min-width: auto;
+    padding: 8px;
+    margin-left: 12px;
+}
+
+.card-content .edit-recipe-button:hover {
+    background-color: var(--my-light-blue);
+    color: whitesmoke;
+}
+
+.card-content .fav-recipe-button:hover {
+    background-color: var(--my-light-blue);
+    color: yellow;
 }

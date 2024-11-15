@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import "./FoodCard.css";
 import { MdEdit } from "react-icons/md";
+import { MdStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const FoodCard = ({ img_src, alt, title, editable, id }) => {
@@ -25,18 +26,18 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
           variant="h6"
           component="a"
           href={`/recipe/view/${id}`}
-          sx={{
-            flexGrow: 1,
-            textDecoration: "none",
-            color: "inherit",
-            fontStyle: "normal",
-          }}
+          className="recipe-title"
         >
           {title}
         </Typography>
         {editable && (
-          <Button className="edit-button" variant="contained">
+          <Button className="edit-recipe-button">
             <MdEdit />
+          </Button>
+        )}
+        {!editable && (
+          <Button className="fav-recipe-button">
+            <MdStar />
           </Button>
         )}
       </CardContent>
