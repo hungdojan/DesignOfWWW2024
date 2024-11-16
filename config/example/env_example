@@ -1,5 +1,8 @@
+# A path to a directory with DB data
+DB_LOCAL_DIR=<path_to_db_storage>
+
 # A path to a directory where all the images will be stored
-UPLOAD_DIR="/data"
+IMAGE_LOCAL_DIR=<path_to_image_storage>
 
 # A mysql root username
 DB_USERNAME=<root_username>

@@ -17,7 +17,7 @@ services:
       - "3306:3306"
     volumes:
       # uncomment for persistent data
-      - db_volume:/var/lib/mysql:z
+      - ${DB_LOCAL_DIR}:/var/lib/mysql:z
     healthcheck:
       test:
         [
@@ -55,7 +55,7 @@ services:
       # - ./backend/:/design_of_www:z
       # set the host machine target
       # - <HOST_MACHINE_TARGET>:<CONTAINER_TARGET>:z
-      - ./data:${UPLOAD_DIR}:z
+      - ${IMAGE_LOCAL_DIR}:${UPLOAD_DIR}:z
 
   frontend:
     build:
@@ -82,13 +82,10 @@ services:
     networks:
       - fe_net
     ports:
-      - "8080:80"
+      - "80:80"
     volumes: []
       # - ./config/nginx/nginx-conf.d/:/etc/nginx/conf.d/:z
 
 networks:
   db_net:
   fe_net:
-
-volumes:
-  db_volume:
