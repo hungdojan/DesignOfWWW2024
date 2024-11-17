@@ -1,21 +1,17 @@
 import React, { useEffect, useState, useRef } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import axios from 'axios';
 import {
   Typography,
   Container,
-  Card,
-  CardContent,
-  CardMedia,
-  Grid2,
-  Button,
 } from "@mui/material";
 import "./addRecipePage.css";
 import { MdEdit } from "react-icons/md";
 
 const AddRecipePage = () => {
   useEffect(() => {
-    document.title = "New Recipe";
+    document.title = "Add Recipe";
   }, []);
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState('');
@@ -53,7 +49,7 @@ const AddRecipePage = () => {
     });
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -64,11 +60,7 @@ const AddRecipePage = () => {
       formData.append('image', image);
     }
 
-    // Here, you would send the form data to the server
-    // using an API endpoint, for example:
-    // axios.post('/api/recipes', formData);
-
-    // teset from
+    // reset from
     setTitle('');
     setIngredients('');
     setDescription('');
