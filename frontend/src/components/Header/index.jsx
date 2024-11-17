@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 import logo from "../../assets/logo-tmp.png";
 import {
@@ -16,12 +16,26 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import "./Header.css";
+import axios from 'axios';
+import useAuthStatus from '../useAuthStatus'; 
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userName, setUserName] = useState(null);
-  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 600px)");
+  
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStatus();
+
+  const handleNavigation = (route) => {
+
+    if (isAuthenticated) {
+      navigate(route);
+    } else {
+      alert('Log in you daft twat.');
+      // TODO: redirect to login page?
+    }
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,13 +45,31 @@ const Header = () => {
     setAnchorEl(null);
   };
 
+  const loginUser = async (username, name, email) => {
+    const payload = {
+      username: username,
+      name: name,
+      email: email,
+    };
+
+      axios.post('/api/auth/login', payload)
+      .catch(err => alert("Error"))
+
+    // handleNavigation("/")
+    // TODO: refresh page?
+  };
+
   // TODO: handle any logout, user auth, storing user info, etc.
   const handleLoginSuccess = (credentialResponse) => {
     var decoded = jwtDecode(credentialResponse.credential);
-    // console.log(decoded);
-    var name = decoded.given_name;
-    setUserName(name);
+    console.log(decoded);
+    loginUser(decoded.email, decoded.name, decoded.email);
   };
+
+  const handleLogout = () => {
+    const response = axios.get('/api/auth/logout');
+    handleNavigation("/")
+  }
 
   return (
     <AppBar position="sticky" className="header">
@@ -80,11 +112,11 @@ const Header = () => {
             <Button
               variant="text"
               className="nav-button"
-              onClick={() => navigate("/shop_list")}
+              onClick={() => handleNavigation("/shop_list")}
             >
               Shopping List
             </Button>
-            {!userName ? (
+            {!isAuthenticated ? (
               <GoogleLogin
                 onSuccess={handleLoginSuccess}
                 onError={() => {
@@ -92,7 +124,7 @@ const Header = () => {
                 }}
               />
             ) : (
-              <Button variant="text" className="nav-button">
+              <Button variant="text" onClick={() => handleLogout()} className="nav-button">
                 Logout {userName}
               </Button>
             )}

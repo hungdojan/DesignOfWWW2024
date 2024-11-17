@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from flask import Flask
 from models import DB
 
+from auth import login_manager
+
 load_dotenv()
 
 
@@ -28,6 +30,8 @@ def create_app() -> Flask:
         MAX_CONTENT_LENGTH=10_000_000,
         UPLOAD_FOLDER=os.getenv("UPLOAD_DIR", "/tmp"),
     )
+
+    login_manager.init_app(app)
 
     food_tips_api.init_app(app)
     DB.init_app(app)
