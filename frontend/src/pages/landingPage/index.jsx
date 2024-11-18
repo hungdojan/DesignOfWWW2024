@@ -1,51 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import FoodCard from "../../components/FoodCard";
 import {
-  Typography,
   TextField,
   Container,
-  Card,
-  CardContent,
-  CardMedia,
   Grid2,
   InputAdornment,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import "./landingPage.css";
 
-import salmonImage from "../../assets/recipe/salmon.jpg";
-import greekSaladImage from "../../assets/recipe/greek_salad.jpg";
-import hotChocolateImage from "../../assets/recipe/hot_chocolate.jpg";
-import FoodCard from "../../components/FoodCard";
-
 <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"></link>
 
-// hardcoded recipes for demo purposes
-const recipes = [
-  {
-    id: 1,
-    title: "Salmon Soup",
-    image: salmonImage,
-    alt: "Salmon Soup",
-  },
-  {
-    id: 2,
-    title: "Greek Salad",
-    image: greekSaladImage,
-    alt: "Greek Salad",
-  },
-  {
-    id: 3,
-    title: "Hot Chocolate",
-    image: hotChocolateImage,
-    alt: "Hot Chocolate",
-  },
-];
-
 const LandingPage = () => {
+  const [recipes, setRecipes] = useState([]);
+
+  const fetchPopularRecipes = () => {
+    axios
+      .get("/api/recipes/")
+      .then((resp) => {
+        Promise.all(
+          resp.data.slice(0, 3).map((recipe) =>
+            axios
+              .get(`/api/recipes/${recipe.ID}/image/`, { responseType: "blob" })
+              .then((imageResp) => {
+                const imageUrl = URL.createObjectURL(imageResp.data);
+                return { ...recipe, imageUrl };
+              })
+              .catch((err) => {
+                console.error("Error fetching image for recipe:", recipe.ID);
+                return { ...recipe, imageUrl: "https://via.placeholder.com/220x140" };
+              })
+          )
+        ).then((recipesWithImages) => {
+          setRecipes(recipesWithImages);
+        });
+      })
+      .catch((err) => alert("Error fetching recipes: " + err));
+  };
+
   useEffect(() => {
     document.title = "Home Page";
+    fetchPopularRecipes();
   }, []);
   return (
     <div>
@@ -78,17 +76,16 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <Container maxWidth="md">
         <Grid2 container spacing={2} className="box-grid">
           {recipes.map((recipe) => (
-            <Grid2 item key={recipe.id} className="recipe-item">
+            <Grid2 item key={recipe.ID} className="recipe-item">
               <FoodCard
-                img_src={recipe.image}
-                alt={recipe.alt}
-                title={recipe.title}
+                img_src={recipe.imageUrl}
+                alt={`Recipe ${recipe.name}`}
+                title={recipe.name}
                 editable={false}
-                id={recipe.id}
+                id={recipe.ID}
               />
             </Grid2>
           ))}

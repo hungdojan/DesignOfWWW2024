@@ -33,12 +33,20 @@
     margin-left: 12px;
 }
 
+.card-content .fav-recipe-button.favorite {
+    background-color: var(--my-light-blue);
+    color: yellow;
+}
+
+.card-content .fav-recipe-button.favorite:hover {
+    background-color: var(--my-light-blue-shadow);
+}
+
 .card-content .edit-recipe-button:hover {
     background-color: var(--my-light-blue);
     color: whitesmoke;
 }
 
 .card-content .fav-recipe-button:hover {
-    background-color: var(--my-light-blue);
-    color: yellow;
+    background-color: #ddd;
 }

@@ -98,7 +98,7 @@ const ListRecipePage = () => {
           {recipes.map((recipe) => (
             <Grid2 item key={recipe.ID}>
               <FoodCard
-                img_src={recipe.imageUrl || "https://via.placeholder.com/220x140"}
+                img_src={recipe.imageUrl}
                 alt={`Recipe ${recipe.name}`}
                 title={recipe.name}
                 editable={true}
