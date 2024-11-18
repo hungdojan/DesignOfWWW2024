@@ -14,48 +14,8 @@ import { PiCookingPotFill } from "react-icons/pi";
 const ListRecipePage = () => {
   const [recipes, setRecipes] = useState([]);
 
-  // TODO uncomment when we have users
-  // const [user, setUser] = useState(null);
-
-  // useEffect(() => {
-  //  const loggedUser = JSON.parse(localStorage.getItem('user'));  // Example, replace with your actual auth logic
-  //  setUser(loggedUser);
-  // }, []);
-
-  // const fetchAllRecipes = () => {
-  //   if (user) {
-  //     axios
-  //       .get('/api/recipes')
-  //       .then((resp) => {
-  //         const filteredRecipes = resp.data.filter(
-  //           (recipe) => recipe.source.userID === user.id
-  //         );
-  
-  //         Promise.all(
-  //           filteredRecipes.map((recipe) =>
-  //             axios
-  //               .get(`/api/recipes/${recipe.ID}/image`, { responseType: 'blob' })
-  //               .then((imageResp) => {
-  //                 const imageUrl = URL.createObjectURL(imageResp.data);
-  //                 return { ...recipe, imageUrl };
-  //               })
-  //               .catch((err) => {
-  //                 console.error('Error fetching image for recipe:', recipe.ID);
-  //                 return { ...recipe, imageUrl: "https://via.placeholder.com/220x140" };
-  //               })
-  //           )
-  //         ).then((recipes) => {
-  //           setRecipesWithImages(recipes);
-  //         });
-  //       })
-  //       .catch((err) => alert('Error fetching recipes: ' + err));
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (user) {
-  //     fetchAllRecipes();
-  // }, [user]);
+  // TODO do for current user
+  const uid = "c0c07782-1349-4c4e-bb82-f9e9a7b558cf";
 
   const fetchAllRecipes = () => {
     axios
