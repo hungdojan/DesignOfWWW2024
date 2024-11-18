@@ -6,9 +6,7 @@ function useAuthStatus() {
 
   useEffect(() => {
     async function checkAuthStatus() {
-      try {
-
-        axios.get('api/auth/status')
+        axios.get('/api/auth/status')
           .then(res => {
             console.log(res);
             setIsAuthenticated(res.data.authenticated);
@@ -17,11 +15,7 @@ function useAuthStatus() {
             console.error(err);
           });
 
-      } catch (error) {
-        console.error('Error checking authentication status:', error);
-        setIsAuthenticated(false);
-      }
-    }
+    } 
 
     checkAuthStatus();
   }, []);
