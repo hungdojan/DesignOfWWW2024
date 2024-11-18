@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mui/material";
 import logo from "../../assets/logo-tmp.png";
 import {
@@ -16,8 +16,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import "./Header.css";
-import axios from 'axios';
-import useAuthStatus from '../useAuthStatus'; 
+import { useAuth } from '../authContext'; 
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -25,7 +24,7 @@ const Header = () => {
   const isMobile = useMediaQuery("(max-width: 600px)");
   
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStatus();
+  const { isAuthenticated, loginUser, logoutUser } = useAuth();
 
   const handleNavigation = (route) => {
 
@@ -33,7 +32,6 @@ const Header = () => {
       navigate(route);
     } else {
       alert('Log in you daft twat.');
-      // TODO: redirect to login page?
     }
   };
 
@@ -44,32 +42,11 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const loginUser = async (username, name, email) => {
-    const payload = {
-      username: username,
-      name: name,
-      email: email,
-    };
-
-      axios.post('/api/auth/login', payload)
-      .catch(err => alert("Error"))
-
-    // handleNavigation("/")
-    // TODO: refresh page?
-  };
-
-  // TODO: handle any logout, user auth, storing user info, etc.
+    
   const handleLoginSuccess = (credentialResponse) => {
     var decoded = jwtDecode(credentialResponse.credential);
-    console.log(decoded);
     loginUser(decoded.email, decoded.name, decoded.email);
   };
-
-  const handleLogout = () => {
-    const response = axios.get('/api/auth/logout');
-    handleNavigation("/")
-  }
 
   return (
     <AppBar position="sticky" className="header">
@@ -99,13 +76,13 @@ const Header = () => {
               className="nav-menu"
               onClose={handleClose}
             >
-              <MenuItem onClick={() => navigate("/recipe/new")}>
+              <MenuItem onClick={() => handleNavigation("/recipe/new")}>
                 Add Recipe
               </MenuItem>
-              <MenuItem onClick={() => navigate("/recipe/my_list")}>
+              <MenuItem onClick={() => handleNavigation("/recipe/my_list")}>
                 My Recipes
               </MenuItem>
-              <MenuItem onClick={() => navigate("/recipe/favorite")}>
+              <MenuItem onClick={() => handleNavigation("/recipe/favorite")}>
                 Favorite Recipes
               </MenuItem>
             </Menu>
@@ -124,7 +101,7 @@ const Header = () => {
                 }}
               />
             ) : (
-              <Button variant="text" onClick={() => handleLogout()} className="nav-button">
+              <Button variant="text" onClick={() => logoutUser()} className="nav-button">
                 Logout {userName}
               </Button>
             )}
@@ -151,16 +128,16 @@ const Header = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => navigate("/recipe/new")}>
+            <MenuItem onClick={() => handleNavigation("/recipe/new")}>
               Add Recipe
             </MenuItem>
-            <MenuItem onClick={() => navigate("/recipe/my_list")}>
+            <MenuItem onClick={() => handleNavigation("/recipe/my_list")}>
               My Recipes
             </MenuItem>
-            <MenuItem onClick={() => navigate("/recipe/favorite")}>
+            <MenuItem onClick={() => handleNavigation("/recipe/favorite")}>
               Favorite Recipes
             </MenuItem>
-            <MenuItem onClick={() => navigate("/shop_list")}>
+            <MenuItem onClick={() => handleNavigation("/shop_list")}>
               Shopping List
             </MenuItem>
 
