@@ -20,7 +20,6 @@ import { useAuth } from '../authContext';
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userName, setUserName] = useState(null);
   const isMobile = useMediaQuery("(max-width: 600px)");
   
   const navigate = useNavigate();
@@ -47,6 +46,11 @@ const Header = () => {
     var decoded = jwtDecode(credentialResponse.credential);
     loginUser(decoded.email, decoded.name, decoded.email);
   };
+
+  const handleLogout = () => {
+    logoutUser()
+    handleNavigation("/")
+  }
 
   return (
     <AppBar position="sticky" className="header">
@@ -101,8 +105,8 @@ const Header = () => {
                 }}
               />
             ) : (
-              <Button variant="text" onClick={() => logoutUser()} className="nav-button">
-                Logout {userName}
+              <Button variant="text" onClick={() => handleLogout()} className="nav-button">
+                Logout
               </Button>
             )}
         </>
@@ -141,7 +145,7 @@ const Header = () => {
               Shopping List
             </MenuItem>
 
-            {!userName ? (
+            {!isAuthenticated ? (
               <MenuItem>
                 <GoogleLogin
                   onSuccess={handleLoginSuccess}
@@ -152,8 +156,8 @@ const Header = () => {
               </MenuItem>
             ) : (
               <MenuItem>
-                <Button variant="text" className="nav-button" onClick={() => setUserName(null)}>
-                  Log Out {userName}
+                <Button variant="text" onClick={() => handleLogout()} className="nav-button">
+                  Logout
                 </Button>
               </MenuItem>
             )}
