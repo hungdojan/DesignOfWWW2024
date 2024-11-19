@@ -57,7 +57,7 @@ const FavoriteRecipesPage = () => {
           ) : favoriteRecipes.length === 0 ? (
             <Typography className="empty">You have no favorite recipes.</Typography>
           ) : (
-        <Grid2 container spacing={2} className="box-grid">
+        <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
           {favoriteRecipes.map((recipe) => (
             <Grid2 item key={recipe.ID}>
               <FoodCard

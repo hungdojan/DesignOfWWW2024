@@ -2,39 +2,18 @@
     justify-content: center;
 }
 
-.box-grid .recipe-item {
-    cursor: pointer;
-}
-
-/* Recommended card styles */
-.box-grid .recommended-card {
-    background-color: var(--my-light-green);
-    color: #fff;
-    margin: 16px;
-    width: 220px;
-}
-
-/* Card content text alignment */
-.card-content {
-    text-align: center;
-    font-style: italic;
-}
-
-/* Search bar container */
 .search-bar-container {
-    padding: 20px;
+    padding: 20px 0;
     justify-content: center;
     max-width: 1000px;
     width: 100%;
 }
 
-/* Search input styles */
 .search-input {
     background-color: white;
     border-radius: 30px;
 }
 
-/* Search icon color */
 .search-bar-container .search-icon {
     color: var(--my-light-green);
 }
@@ -79,4 +58,12 @@
 .highlight {
     color: var(--my-light-blue);
     font-weight: bold;
+}
+
+.container .empty {
+    color: grey;
+    font-size: 24px;
+    text-align: center;
+    flex-grow: 1;
+    margin: 60px 0;
 }

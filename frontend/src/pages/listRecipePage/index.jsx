@@ -54,7 +54,7 @@ const ListRecipePage = () => {
         My Recipes <PiCookingPotFill class="recipe-icon" />
       </Typography>
       <Container maxWidth="md">
-        <Grid2 container spacing={2} className="box-grid">
+        <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
           {recipes.map((recipe) => (
             <Grid2 item key={recipe.ID}>
               <FoodCard
