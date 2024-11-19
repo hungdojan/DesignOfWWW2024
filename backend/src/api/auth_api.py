@@ -53,12 +53,6 @@ class AuthLogin(Resource):
     
         return user.as_dict(), HTTPStatus.CREATED
 
-@auth_ns_api.route("/register")
-class AuthRegister(Resource):
-
-    def post(self):
-        return response_ok("User registered.")
-
 @auth_ns_api.route("/logout")
 class AuthLogout(Resource):
 
@@ -71,6 +65,12 @@ class AuthLogout(Resource):
 @auth_ns_api.route("/status")
 class AuthStatus(Resource):
 
-    # @login_manager.user_loader
     def get(self):
         return {"authenticated": current_user.is_authenticated}
+    
+@auth_ns_api.route("/id")
+class AuthStatus(Resource):
+
+    @login_required
+    def get(self):
+        return {"id": current_user.id}
