@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import {
@@ -12,6 +12,11 @@ import {
   Box,
   Button,
   Stack,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import { MdEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
@@ -19,8 +24,10 @@ import "./recipePage.css";
 
 const RecipePage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const fetchRecipe = async () => {
     try {
@@ -28,6 +35,22 @@ const RecipePage = () => {
       setRecipe(response.data);
     } catch (err) {
       setError("Failed to fetch recipe.");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (recipe.imageUrl) {
+        await axios.delete(`/api/recipes/${id}/image/${recipe.ID}`);
+      }
+
+      await axios.delete(`/api/recipes/${id}`);
+
+      navigate("/recipes");
+    } catch (err) {
+      console.error("Failed to delete recipe:", err);
+    } finally {
+      setDialogOpen(false); // Close the dialog
     }
   };
 
@@ -106,6 +129,7 @@ const RecipePage = () => {
                 variant="outlined"
                 startIcon={<MdDelete />}
                 className="delete-button"
+                onClick={() => setDialogOpen(true)}
               >
                 Delete Recipe
               </Button>
@@ -113,6 +137,43 @@ const RecipePage = () => {
           </CardContent>
         </Card>
       </Container>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          className: "dialog-window",
+        }}
+      >
+        <DialogTitle id="alert-dialog-title" className="dialog-title">
+          {"Confirm Recipe Deletion"}
+        </DialogTitle>
+        <DialogContent className="dialog-content">
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this recipe? <br /> This action cannot be undone!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions className="dialog-actions">
+          <Button
+            onClick={() => setDialogOpen(false)}
+            className="cancel-button"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            className="delete-button"
+            autoFocus
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
       <Footer />
     </Box>
   );
