@@ -14,10 +14,14 @@ import { useNavigate } from "react-router-dom";
 
 const FoodCard = ({ img_src, alt, title, editable, id }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
   // TODO for current user
   const uid = "e3e8248b-9419-49bc-a9c2-20cd352345c9";
-  const navigate = useNavigate();
+
+  const handleEditClick = () => {
+    navigate('/recipe/edit');
+  };
 
   const checkIfFavorite = async () => {
     try {
@@ -68,7 +72,9 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
           {title}
         </Typography>
         {editable && (
-          <Button className="edit-recipe-button">
+          <Button
+          className="edit-recipe-button"
+            onClick={handleEditClick}>
             <MdEdit />
           </Button>
         )}
