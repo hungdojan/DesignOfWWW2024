@@ -29,6 +29,10 @@ const RecipePage = () => {
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const handleEditClick = () => {
+    navigate('/recipe/edit');
+  };
+
   const fetchRecipe = async () => {
     try {
       const response = await axios.get(`/api/recipes/${id}`);
@@ -41,16 +45,15 @@ const RecipePage = () => {
   const handleDelete = async () => {
     try {
       if (recipe.imageUrl) {
-        await axios.delete(`/api/recipes/${id}/image/${recipe.ID}`);
+        await axios.delete(`/api/recipes/${id}/image/${recipe.ID}/`);
       }
+      await axios.delete(`/api/recipes/${id}/`);
 
-      await axios.delete(`/api/recipes/${id}`);
-
-      navigate("/recipes");
+      navigate("/api/recipes");
     } catch (err) {
       console.error("Failed to delete recipe:", err);
     } finally {
-      setDialogOpen(false); // Close the dialog
+      setDialogOpen(false);
     }
   };
 
@@ -119,6 +122,7 @@ const RecipePage = () => {
                 variant="outlined"
                 startIcon={<MdEdit />}
                 className="edit-button"
+                onClick={handleEditClick}
               >
                 Edit Recipe
               </Button>

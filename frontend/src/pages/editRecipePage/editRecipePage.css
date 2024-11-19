@@ -1,0 +1,231 @@
+.my-recipes {
+    background-color: var(--my-light-green);
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-form {
+    background-color: whitesmoke;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    max-width: 720px;
+    margin: 20px;
+    padding: 20px;
+}
+
+.add-form .one-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-form .image-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-image {
+    margin: 10px;
+    display: none;
+}
+
+.upload-btn {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--my-light-green);
+    color: white;
+    font-size: 30px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: var(--my-light-blue)
+}
+
+.image-preview {
+    margin-top: 10px;
+    border-radius: 10px;
+    display: none;
+    max-width: 230px;
+    opacity: 80%;
+}
+
+
+.add-form .input-field {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    resize: none;
+    overflow: auto;
+    padding: 5px;
+    margin: 5px 0px;
+    margin-left: 23px;
+    width: 550px;
+}
+
+.add-form .input-field-instruction {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    resize: none;
+    overflow: auto;
+    padding: 5px;
+    margin: 5px 0px;
+    margin-left: 19px;
+    width: 550px;
+}
+
+.add-form .input-menu {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    padding: 8px;
+    margin: 5px 0;
+    margin-left: 42px;
+    width: 560px;
+}
+
+.add-form .input-number-field {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.add-form .time {
+    margin-left: 8px;
+    font-style: italic;
+    color: var(--my-dark-brown);
+}
+
+.add-form button {
+    flex: 1;
+    background-color: var(--my-light-green);
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+.add-form .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+}
+
+.add-form .button-group button {
+    flex: 1;
+    margin-top: 10px;
+}
+
+.save-button:hover {
+    background-color: var(--my-light-blue);
+}
+
+.add-form .cancel-button {
+    background-color: whitesmoke;
+    color: var(--my-dark-brown);
+}
+
+.cancel-button:hover {
+    background-color: #ddd;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 5px;
+    }
+
+    .add-form {
+        margin: 5px;
+        padding: 15px;
+        width: 100%;
+    }
+
+    .add-form .one-item {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-start;
+    }
+
+    .add-form .input-field {
+        width: 100%;
+        margin: 5px 0px;
+        padding: 10px;
+        box-sizing: border-box;
+        min-height: 50px;
+        overflow: hidden;
+        resize: none;
+    }
+
+    .add-form .input-field-instruction {
+        width: 100%;
+        margin: 5px 0px;
+        padding: 10px;
+        box-sizing: border-box;
+        min-height: 50px;
+        overflow: hidden;
+        resize: none;
+    }
+
+    .add-form .input-menu {
+        width: 100%;
+        margin: 5px 0px;
+        box-sizing: border-box;
+        min-height: 50px;
+    }
+
+    .input-with-units {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .input-number-field {
+        flex: 1;
+        width: 0;
+        min-width: 0;
+      }
+
+      .time {
+        flex-shrink: 0;
+        margin-left: 8px;
+        white-space: nowrap;
+      }
+
+    .add-form .button-group {
+        flex-direction: column;
+    }
+
+    .add-form .button-group button {
+        margin: 0;
+        width: 100%;
+    }
+
+    .add-form .button-group .save-button {
+        margin-top: 10px;
+    }
+}

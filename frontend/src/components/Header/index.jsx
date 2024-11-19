@@ -30,7 +30,7 @@ const Header = () => {
     if (isAuthenticated) {
       navigate(route);
     } else {
-      alert('Log in you daft twat.');
+      alert('You must be logged in to access this page!');
     }
   };
 

@@ -6,12 +6,12 @@ import {
   Typography,
   Container,
 } from "@mui/material";
-import "./addRecipePage.css";
+import "./editRecipePage.css";
 import { MdEdit } from "react-icons/md";
 
-const AddRecipePage = () => {
+const EditRecipePage = () => {
   useEffect(() => {
-    document.title = "Add Recipe";
+    document.title = "Edit Recipe";
   }, []);
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState('');
@@ -76,7 +76,7 @@ const AddRecipePage = () => {
     <>
       <Header />
       <Typography variant="h4" className="my-recipes">
-        Add Recipe <MdEdit class="recipe-icon" />
+        Edit Recipe <MdEdit class="recipe-icon" />
       </Typography>
       <Container className="form-container">
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="add-form">
@@ -178,7 +178,16 @@ const AddRecipePage = () => {
 
           <img id="image-preview" src="" alt="Image Preview" className="image-preview" />
 
-          <button type="submit" className="add-button">Add Recipe</button>
+          <div class="button-group">
+          <button
+            type="submit"
+            className="save-button"
+            >Save</button>
+          <button
+            type="submit"
+            className="cancel-button"
+            >Cancel</button>
+          </div>
         </form>
       </Container>
       <Footer />
@@ -186,4 +195,4 @@ const AddRecipePage = () => {
   );
 };
 
-export default AddRecipePage;
+export default EditRecipePage;
