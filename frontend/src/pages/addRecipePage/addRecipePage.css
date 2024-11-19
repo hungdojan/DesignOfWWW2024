@@ -76,8 +76,45 @@
     resize: none;
     overflow: auto;
     padding: 5px;
-    margin: 5px 20px;
+    margin: 5px 0px;
+    margin-left: 23px;
     width: 550px;
+}
+
+.add-form .input-field-instruction {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    resize: none;
+    overflow: auto;
+    padding: 5px;
+    margin: 5px 0px;
+    margin-left: 19px;
+    width: 550px;
+}
+
+.add-form .input-menu {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    padding: 8px;
+    margin: 5px 0;
+    margin-left: 42px;
+    width: 560px;
+}
+
+.add-form .input-number-field {
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color:var(--my-dark-brown);
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.add-form .time {
+    margin-left: 8px;
+    font-style: italic;
+    color: var(--my-dark-brown);
 }
 
 .add-button {
@@ -121,6 +158,42 @@
         overflow: hidden;
         resize: none;
     }
+
+    .add-form .input-field-instruction {
+        width: 100%;
+        margin: 5px 0px;
+        padding: 10px;
+        box-sizing: border-box;
+        min-height: 50px;
+        overflow: hidden;
+        resize: none;
+    }
+
+    .add-form .input-menu {
+        width: 100%;
+        margin: 5px 0px;
+        box-sizing: border-box;
+        min-height: 50px;
+    }
+
+    .input-with-units {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .input-number-field {
+        flex: 1;
+        width: 0;
+        min-width: 0;
+      }
+
+      .time {
+        flex-shrink: 0;
+        margin-left: 8px;
+        white-space: nowrap;
+      }
 
     .add-button {
         width: 100%;

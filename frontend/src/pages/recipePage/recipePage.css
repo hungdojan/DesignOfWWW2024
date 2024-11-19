@@ -19,6 +19,28 @@
     width: auto;
 }
 
+.recipe-box .recipe-info {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    color: var(--my-dark-brown);
+    margin-bottom: 8px;
+}
+
+.recipe-box .recipe-info > * {
+    flex: 1;
+    min-width: 150px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.recipe-box .recipe-info .highlight {
+    color: var(--my-light-blue);
+    font-style: italic;
+}
+
 .recipe-box .subtitle {
     background-color: var(--my-light-green);
     color: white;
@@ -74,3 +96,12 @@
     background-color: red;
     color: whitesmoke;
 }
+
+@media (max-width: 768px) {
+    .recipe-box .recipe-info {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+  }

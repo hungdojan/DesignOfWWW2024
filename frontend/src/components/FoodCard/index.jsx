@@ -16,7 +16,7 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
   const [isFavorite, setIsFavorite] = useState(false);
 
   // TODO for current user
-  const uid = "c0c07782-1349-4c4e-bb82-f9e9a7b558cf";
+  const uid = "e3e8248b-9419-49bc-a9c2-20cd352345c9";
   const navigate = useNavigate();
 
   const checkIfFavorite = async () => {

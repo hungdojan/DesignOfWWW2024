@@ -14,13 +14,12 @@ const AddRecipePage = () => {
     document.title = "Add Recipe";
   }, []);
   const [title, setTitle] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [expectedTime, setExpectedTime] = useState('');
   const [ingredients, setIngredients] = useState('');
+  const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
-
-  const titleRef = useRef(null);
-  const ingredientsRef = useRef(null);
-  const descriptionRef = useRef(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -38,23 +37,21 @@ const AddRecipePage = () => {
     }
   };
 
-  document.addEventListener("DOMContentLoaded", function() {
-    const inputs = document.querySelectorAll('.input-field');
-
-    inputs.forEach(input => {
-      input.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
-      });
-    });
-  });
+  const handleResize = (e) => {
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append('title', title);
+    formData.append('difficulty', difficulty);
+    formData.append('expected-time', expectedTime);
     formData.append('ingredients', ingredients);
+    formData.append('instructions', instructions);
     formData.append('description', description);
     if (image) {
       formData.append('image', image);
@@ -62,7 +59,10 @@ const AddRecipePage = () => {
 
     // reset from
     setTitle('');
+    setDifficulty('');
+    setExpectedTime('');
     setIngredients('');
+    setInstructions('');
     setDescription('');
     setImage(null);
 
@@ -70,10 +70,6 @@ const AddRecipePage = () => {
     if (preview) {
       preview.style.display = 'none';
     }
-
-    if (titleRef.current) titleRef.current.style.height = 'auto';
-    if (ingredientsRef.current) ingredientsRef.current.style.height = 'auto';
-    if (descriptionRef.current) descriptionRef.current.style.height = 'auto';
   };
 
   return (
@@ -93,9 +89,40 @@ const AddRecipePage = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Set title"
-              ref={titleRef}
               required
             />
+          </div>
+
+          <div className="one-item">
+            <label htmlFor="difficulty">Difficulty</label>
+            <select
+              id="difficulty"
+              className="input-menu"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              required
+            >
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Expert">Expert</option>
+            </select>
+          </div>
+
+          <div className="one-item">
+            <label htmlFor="expected-time">Expected Time</label>
+            <div className="input-with-units">
+              <input
+                type="number"
+                id="expected-time"
+                className="input-number-field"
+                value={expectedTime}
+                onChange={(e) => setExpectedTime(e.target.value)}
+                placeholder="Enter time"
+                min="1"
+                required
+              />
+              <span className="time">minutes</span>
+            </div>
           </div>
 
           <div className="one-item">
@@ -105,8 +132,21 @@ const AddRecipePage = () => {
               value={ingredients}
               className="input-field"
               onChange={(e) => setIngredients(e.target.value)}
-              placeholder="List ingredients"
-              ref={ingredientsRef}
+              placeholder="List ingredients separated by enter"
+              onInput={handleResize}
+              required
+            />
+          </div>
+
+          <div className="one-item">
+            <label htmlFor="instructions">Instructions</label>
+            <textarea
+              id="instructions"
+              value={instructions}
+              className="input-field-instruction"
+              onChange={(e) => setInstructions(e.target.value)}
+              placeholder="Add instructions seperated by enter"
+              onInput={handleResize}
               required
             />
           </div>
@@ -118,8 +158,8 @@ const AddRecipePage = () => {
               value={description}
               className="input-field"
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the recipe"
-              ref={descriptionRef}
+              placeholder="Add any additional description ..."
+              onInput={handleResize}
               required
             />
           </div>

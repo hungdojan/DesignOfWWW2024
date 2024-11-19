@@ -36,10 +36,6 @@ const RecipePage = () => {
     fetchRecipe();
   }, [id]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   if (!recipe) {
     return <div>Recipe not found.</div>;
   }
@@ -62,6 +58,10 @@ const RecipePage = () => {
           </Box>
 
           <CardContent>
+            <div className="recipe-info">
+              <Typography>Difficulty: <span className="highlight">{recipe.difficulty}</span></Typography>
+              <Typography>Expected Time: <span className="highlight">{recipe.expectedTime} minutes</span></Typography>
+            </div>
             {/* Ingredients Section */}
             <Typography variant="h5" component="div" className="subtitle">
               Ingredients
@@ -79,7 +79,11 @@ const RecipePage = () => {
               Instructions
             </Typography>
             <Stack component="ol" spacing={1} className="instruction-list">
-              {recipe.instructions.split("\n").map((instruction, index) => (
+            {recipe.instructions
+              .split("\n")
+              .map(instruction => instruction.trim())
+              .filter(instruction => instruction)
+              .map((instruction, index) => (
                 <Box component="li" key={index}>
                   <Typography variant="body1">{instruction}</Typography>
                 </Box>
