@@ -10,10 +10,6 @@ import "./addRecipePage.css";
 import { MdEdit } from "react-icons/md";
 
 const AddRecipePage = () => {
-  useEffect(() => {
-    document.title = "Add Recipe";
-  }, []);
-
   const [userID, setUserID] = useState('');
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState('Beginner');
@@ -34,8 +30,6 @@ const AddRecipePage = () => {
       console.error("Error fetching user ID:", error.response || error.message);
     }
   };
-
-  fetchUserId();
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -117,6 +111,11 @@ const AddRecipePage = () => {
       alert("Failed to add recipe. Please try again.");
     }
   };
+
+  useEffect(() => {
+    fetchUserId();
+    document.title = "Add Recipe";
+  }, []);
 
   return (
     <>

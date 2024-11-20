@@ -11,13 +11,28 @@ import axios from "axios";
 import "./favoriteRecipePage.css";
 
 const FavoriteRecipesPage = () => {
+  const [userID, setUserID] = useState('');
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
   const [error, setError] = useState(null);
 
-  const fetchFavoriteRecipes = async () => {
+  const fetchUserId = async () => {
     try {
-      const uid = "dummy"; // TODO
-      const response = await axios.get(`/favorites/favorite_recipes/${uid}/`);
+      axios
+      .get("/api/auth/id")
+      .then((response) => {
+        setUserID(response.data.id);
+       });
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
+    }
+  };
+
+  const fetchFavoriteRecipes = async () => {
+    if (!userID) {
+      return;
+    }
+    try {
+      const response = await axios.get(`/api/favorites/favorite_recipes/${userID}`);
       const recipes = await Promise.all(
         response.data.map(async (recipe) => {
           try {
@@ -40,9 +55,15 @@ const FavoriteRecipesPage = () => {
   };
 
   useEffect(() => {
-    fetchFavoriteRecipes();
+    fetchUserId();
     document.title = "Favorite Recipes";
   }, []);
+
+  useEffect(() => {
+    if (userID) {
+      fetchFavoriteRecipes();
+    }
+  }, [userID]);
   return (
     <>
       <Header />

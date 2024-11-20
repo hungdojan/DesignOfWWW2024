@@ -26,6 +26,7 @@ const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userID, setUserID] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -41,7 +42,6 @@ const RecipePage = () => {
       console.error("Error fetching user ID:", error.response || error.message);
     }
   };
-  fetchUserId();
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
@@ -73,6 +73,7 @@ const RecipePage = () => {
   useEffect(() => {
     document.title = "Recipe";
     fetchRecipe();
+    fetchUserId();
   }, [id]);
 
   if (!recipe) {

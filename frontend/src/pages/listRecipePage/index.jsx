@@ -12,40 +12,57 @@ import "./listRecipePage.css";
 import { PiCookingPotFill } from "react-icons/pi";
 
 const ListRecipePage = () => {
+  const [userID, setUserID] = useState('');
   const [recipes, setRecipes] = useState([]);
 
-  // TODO do for current user
-  const uid = "c0c07782-1349-4c4e-bb82-f9e9a7b558cf";
+  const fetchUserId = async () => {
+    try {
+      axios
+      .get("/api/auth/id")
+      .then((response) => {
+        setUserID(response.data.id);
+       });
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
+    }
+  };
 
-  const fetchAllRecipes = () => {
-    axios
-      .get('/api/recipes/')
-      .then((resp) => {
-        // fetch images
-        Promise.all(
-          resp.data.map((recipe) =>
-            axios
-              .get(`/api/recipes/${recipe.ID}/image/`, { responseType: 'blob' })
-              .then((imageResp) => {
-                const imageUrl = URL.createObjectURL(imageResp.data);
-                return { ...recipe, imageUrl };
-              })
-              .catch((err) => {
-                console.error('Error fetching image for recipe:', recipe.ID);
-                return { ...recipe, imageUrl: "https://via.placeholder.com/220x140" };
-              })
-          )
-        ).then((recipes) => {
-          setRecipes(recipes);
-        });
-      })
-      .catch((err) => alert('Error fetching recipes: ' + err));
+  const fetchAllRecipes = async () => {
+    try {
+      const resp = await axios.get('/api/recipes/');
+      const userRecipes = resp.data.filter((recipe) => recipe.source.userID === userID);
+
+      const recipesWithImages = await Promise.all(
+        userRecipes.map((recipe) =>
+          axios
+            .get(`/api/recipes/${recipe.ID}/image/`, { responseType: 'blob' })
+            .then((imageResp) => {
+              const imageUrl = URL.createObjectURL(imageResp.data);
+              return { ...recipe, imageUrl };
+            })
+            .catch((err) => {
+              console.error('Error fetching image for recipe:', recipe.ID);
+              return { ...recipe, imageUrl: "https://via.placeholder.com/220x140" };
+            })
+        )
+      );
+
+      setRecipes(recipesWithImages);
+    } catch (err) {
+      alert('Error fetching recipes: ' + err);
+    }
   };
 
   useEffect(() => {
-    fetchAllRecipes();
+    fetchUserId();
     document.title = "My Recipes";
   }, []);
+
+  useEffect(() => {
+    if (userID) {
+      fetchAllRecipes();
+    }
+  }, [userID]);
 
   return (
     <>

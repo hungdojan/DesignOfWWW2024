@@ -28,7 +28,6 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
       console.error("Error fetching user ID:", error.response || error.message);
     }
   };
-  fetchUserId();
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
@@ -62,8 +61,15 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
   };
 
   useEffect(() => {
-    checkIfFavorite();
-  }, [id]);
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (userID) {
+      checkIfFavorite();
+    }
+  }, [id, userID]);
+
   return (
     <Card className="food-card">
       <CardMedia
