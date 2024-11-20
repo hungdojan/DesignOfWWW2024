@@ -13,9 +13,10 @@ import { MdStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../authContext';
 
-const FoodCard = ({ img_src, alt, title, editable, id }) => {
+const FoodCard = ({ alt, title, editable, id }) => {
   const [userID, setUserID] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
+  const [imgSrc, setImgSrc] = useState(null);
   const { loggedIn, loginUser, logoutUser } = useAuth();
   const navigate = useNavigate();
 
@@ -39,6 +40,26 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
       fetchUserId();
     }
   }, [loggedIn]);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/${id}/image/`);
+        if (response.data?.images_ids?.length > 0) {
+          const imageId = response.data.images_ids[0];
+          const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
+          const imageUrl = URL.createObjectURL(imageResponse.data);
+          setImgSrc(imageUrl);
+        } else {
+          console.log("No image IDs found in the response.");
+        }
+      } catch (error) {
+        console.error("Error fetching image", error);
+      }
+    };
+
+    fetchImage();
+  }, [id]);
 
   useEffect(() => {
     if (userID && id) {
@@ -78,7 +99,7 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
       <CardMedia
         component="img"
         height="140"
-        image={img_src}
+        image={imgSrc || "https://via.placeholder.com/220x140"}
         alt={alt}
         onClick={() => navigate(`/recipe/view/${id}`)}
       />

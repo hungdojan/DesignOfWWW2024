@@ -40,22 +40,8 @@ const LandingPage = () => {
     axios
       .get("/api/recipes/")
       .then((resp) => {
-        Promise.all(
-          resp.data.slice(0, 3).map((recipe) =>
-            axios
-              .get(`/api/recipes/${recipe.ID}/image/`, { responseType: "blob" })
-              .then((imageResp) => {
-                const imageUrl = URL.createObjectURL(imageResp.data);
-                return { ...recipe, imageUrl };
-              })
-              .catch((err) => {
-                console.error("Error fetching image for recipe:", recipe.ID);
-                return { ...recipe, imageUrl: "https://via.placeholder.com/220x140" };
-              })
-          )
-        ).then((recipesWithImages) => {
-          setRecipes(recipesWithImages);
-        });
+        const popularRecipes = resp.data.slice(0, 3);
+        setRecipes(popularRecipes);
       })
       .catch((err) => alert("Error fetching recipes: " + err));
   };

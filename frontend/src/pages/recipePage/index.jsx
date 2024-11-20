@@ -27,6 +27,7 @@ const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userID, setUserID] = useState('');
+  const [imgSrc, setImgSrc] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -49,6 +50,26 @@ const RecipePage = () => {
     }
   }, [loggedIn]);
 
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/${id}/image/`);
+        if (response.data?.images_ids?.length > 0) {
+          const imageId = response.data.images_ids[0];
+          const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
+          const imageUrl = URL.createObjectURL(imageResponse.data);
+          setImgSrc(imageUrl);
+        } else {
+          console.log("No image IDs found in the response.");
+        }
+      } catch (error) {
+        console.error("Error fetching image", error);
+      }
+    };
+
+    fetchImage();
+  }, [id]);
+
   const handleEditClick = () => {
     navigate('/recipe/edit');
   };
@@ -64,7 +85,7 @@ const RecipePage = () => {
 
   const handleDelete = async () => {
     try {
-      if (recipe.imageUrl) {
+      if (imgSrc) {
         await axios.delete(`/api/recipes/${userID}/image/${recipe.ID}/`);
       }
       await axios.delete(`/api/recipes/${id}`);
@@ -97,7 +118,7 @@ const RecipePage = () => {
           <Box className="recipe-image">
             <CardMedia
               component="img"
-              image={recipe.image}
+              image={imgSrc}
               alt={recipe.name}
             />
           </Box>
@@ -118,6 +139,14 @@ const RecipePage = () => {
                 </Box>
               ))}
             </Stack>
+
+            {/* Description Section */}
+            <Typography variant="h5" component="div" className="subtitle">
+              Description
+            </Typography>
+            <Box class="description-box">
+              {recipe.description}
+            </Box>
 
             {/* Instructions Section */}
             <Typography variant="h5" component="div" className="subtitle">

@@ -12,7 +12,7 @@ import { MdEdit } from "react-icons/md";
 const AddRecipePage = () => {
   const [userID, setUserID] = useState('');
   const [title, setTitle] = useState('');
-  const [difficulty, setDifficulty] = useState('Beginner');
+  const [difficulty, setDifficulty] = useState("Beginner");
   const [expectedTime, setExpectedTime] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
@@ -44,6 +44,7 @@ const AddRecipePage = () => {
       };
 
       reader.readAsDataURL(file);
+      setImage(file);
     }
   };
 
@@ -89,7 +90,20 @@ const AddRecipePage = () => {
         withCredentials: true,
       });
 
-      // TODO image
+      const recipeId = response.data.ID;
+
+      if (image) {
+        const formData = new FormData();
+        formData.append('file', image);
+    
+        await axios.post(`/api/recipes/${recipeId}/image/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        });
+        console.log('Image uploaded successfully!');
+      } else {
+        console.log('No image to upload.');
+      }
 
       // reset form
       setTitle('');
@@ -134,6 +148,7 @@ const AddRecipePage = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Set title"
+              maxLength={48}
               required
             />
           </div>

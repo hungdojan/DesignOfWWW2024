@@ -7,6 +7,9 @@
     color: var(--my-light-blue);
     padding: 8px;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .recipe-box .recipe-image {
@@ -17,6 +20,9 @@
     padding-bottom: 0;
     object-fit: cover;
     width: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .recipe-box .recipe-info {
@@ -60,6 +66,15 @@
 .recipe-box .ingredients-list li {
     color: var(--my-dark-brown);
     font-style: italic; 
+}
+
+.recipe-box .description-box {
+    color: var(--my-dark-brown);
+    background-color: whitesmoke;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    padding: 8px 16px;
+    margin: 6px 0;
 }
 
 .recipe-box .instruction-list {

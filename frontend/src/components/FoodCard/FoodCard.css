@@ -17,11 +17,13 @@
 .card-content .recipe-title {
     color: white;
     flex-grow: 1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
     text-decoration: none;
     text-align: left;
+    white-space: normal;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    display: inline-block;
+    max-width: 100%; 
 }
 
 .card-content button {

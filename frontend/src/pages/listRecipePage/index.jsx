@@ -31,23 +31,7 @@ const ListRecipePage = () => {
     try {
       const resp = await axios.get('/api/recipes/');
       const userRecipes = resp.data.filter((recipe) => recipe.source.userID === userID);
-
-      const recipesWithImages = await Promise.all(
-        userRecipes.map((recipe) =>
-          axios
-            .get(`/api/recipes/${recipe.ID}/image/`, { responseType: 'blob' })
-            .then((imageResp) => {
-              const imageUrl = URL.createObjectURL(imageResp.data);
-              return { ...recipe, imageUrl };
-            })
-            .catch((err) => {
-              console.error('Error fetching image for recipe:', recipe.ID);
-              return { ...recipe, imageUrl: "https://via.placeholder.com/220x140" };
-            })
-        )
-      );
-
-      setRecipes(recipesWithImages);
+      setRecipes(userRecipes);
     } catch (err) {
       alert('Error fetching recipes: ' + err);
     }
