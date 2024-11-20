@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { useAuth } from '../../components/authContext'; 
 import {
   Typography,
   Container,
@@ -26,22 +27,27 @@ const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userID, setUserID] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { loggedIn, loginUser, logoutUser } = useAuth();
 
-  const fetchUserId = async () => {
-    try {
-      axios
-      .get("/api/auth/id")
-      .then((response) => {
-        setUserID(response.data.id);
-       });
-    } catch (error) {
-      console.error("Error fetching user ID:", error.response || error.message);
+  useEffect(() => {
+    if (loggedIn) {
+      const fetchUserId = async () => {
+        try {
+          axios
+          .get("/api/auth/id")
+          .then((response) => {
+            setUserID(response.data.id);
+          });
+        } catch (error) {
+          console.error("Error fetching user ID:", error.response || error.message);
+        }
+      };
+      fetchUserId();
     }
-  };
+  }, [loggedIn]);
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
@@ -73,7 +79,6 @@ const RecipePage = () => {
   useEffect(() => {
     document.title = "Recipe";
     fetchRecipe();
-    fetchUserId();
   }, [id]);
 
   if (!recipe) {

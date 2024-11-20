@@ -11,36 +11,49 @@ import "./FoodCard.css";
 import { MdEdit } from "react-icons/md";
 import { MdStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../authContext';
 
 const FoodCard = ({ img_src, alt, title, editable, id }) => {
   const [userID, setUserID] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
+  const { loggedIn, loginUser, logoutUser } = useAuth();
   const navigate = useNavigate();
-
-  const fetchUserId = async () => {
-    try {
-      axios
-      .get("/api/auth/id")
-      .then((response) => {
-        setUserID(response.data.id);
-       });
-    } catch (error) {
-      console.error("Error fetching user ID:", error.response || error.message);
-    }
-  };
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
   };
 
-  const checkIfFavorite = async () => {
-    try {
-      const response = await axios.get(`/api/favorites/favorite_recipes/${userID}`);
-      setIsFavorite(response.data.some(recipe => recipe.ID === id));
-    } catch (error) {
-      console.error("Error fetching favorites:", error);
+  useEffect(() => {
+    if (loggedIn) {
+      const fetchUserId = async () => {
+        try {
+          axios
+          .get("/api/auth/id")
+          .then((response) => {
+            setUserID(response.data.id);
+          });
+        } catch (error) {
+          console.error("Error fetching user ID:", error.response || error.message);
+        }
+      };
+      fetchUserId();
     }
-  };
+  }, [loggedIn]);
+
+  useEffect(() => {
+    if (userID && id) {
+      const checkIfFavorite = async () => {
+        try {
+          const response = await axios.get(`/api/favorites/favorite_recipes/${userID}`);
+          setIsFavorite(response.data.some(recipe => recipe.ID === id));
+        } catch (error) {
+          console.error("Error fetching favorites:", error);
+        }
+      };
+      
+      checkIfFavorite();
+    }
+  }, [id, userID]);
 
   const toggleFavorite = async () => {
     try {
@@ -59,16 +72,6 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
       console.error("Error:", error);
     }
   };
-
-  useEffect(() => {
-    fetchUserId();
-  }, []);
-
-  useEffect(() => {
-    if (userID) {
-      checkIfFavorite();
-    }
-  }, [id, userID]);
 
   return (
     <Card className="food-card">
