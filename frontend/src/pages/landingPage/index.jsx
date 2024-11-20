@@ -17,6 +17,7 @@ import "./landingPage.css";
 
 const LandingPage = () => {
   const [recipes, setRecipes] = useState([]);
+  const [popularRecipes, setPopularRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchPerformed, setSearchPerformed] = useState(false);
@@ -40,8 +41,8 @@ const LandingPage = () => {
     axios
       .get("/api/recipes/")
       .then((resp) => {
-        const popularRecipes = resp.data.slice(0, 3);
-        setRecipes(popularRecipes);
+        setRecipes(resp.data);
+        setPopularRecipes(resp.data.slice(0, 3));
       })
       .catch((err) => alert("Error fetching recipes: " + err));
   };
@@ -101,10 +102,9 @@ const LandingPage = () => {
       {!searchPerformed && (
         <Container maxWidth="md">
           <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
-            {recipes.map((recipe) => (
+            {popularRecipes.map((recipe) => (
               <Grid2 item key={recipe.ID} className="recipe-item">
                 <FoodCard
-                  img_src={recipe.imageUrl}
                   alt={`Recipe ${recipe.name}`}
                   title={recipe.name}
                   editable={false}

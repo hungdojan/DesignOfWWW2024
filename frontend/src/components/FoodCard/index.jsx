@@ -17,7 +17,7 @@ const FoodCard = ({ alt, title, editable, id }) => {
   const [userID, setUserID] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
-  const { loggedIn, loginUser, logoutUser } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleEditClick = () => {
@@ -25,21 +25,19 @@ const FoodCard = ({ alt, title, editable, id }) => {
   };
 
   useEffect(() => {
-    if (loggedIn) {
-      const fetchUserId = async () => {
-        try {
-          axios
-          .get("/api/auth/id")
-          .then((response) => {
-            setUserID(response.data.id);
-          });
-        } catch (error) {
-          console.error("Error fetching user ID:", error.response || error.message);
-        }
-      };
+    const fetchUserId = async () => {
+      try {
+        const response = await axios.get("/api/auth/id");
+        setUserID(response.data.id);
+      } catch (error) {
+        console.error("Error fetching user ID:", error.response || error.message);
+      }
+    };
+
+    if (isAuthenticated) {
       fetchUserId();
     }
-  }, [loggedIn]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -89,7 +87,9 @@ const FoodCard = ({ alt, title, editable, id }) => {
         setIsFavorite(true);
       }
     } catch (error) {
-      alert("Error: Failed to toggle favorite status.");
+      if (isAuthenticated) {
+        alert("Error: Failed to toggle favorite status.");
+      }
       console.error("Error:", error);
     }
   };

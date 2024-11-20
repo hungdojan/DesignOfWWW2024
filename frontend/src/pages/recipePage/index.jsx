@@ -31,10 +31,10 @@ const RecipePage = () => {
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { loggedIn, loginUser, logoutUser } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (loggedIn) {
+    if (isAuthenticated) {
       const fetchUserId = async () => {
         try {
           axios
@@ -48,7 +48,7 @@ const RecipePage = () => {
       };
       fetchUserId();
     }
-  }, [loggedIn]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const fetchImage = async () => {
