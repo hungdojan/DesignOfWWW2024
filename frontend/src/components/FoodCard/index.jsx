@@ -15,7 +15,6 @@ import { useAuth } from '../authContext';
 
 const FoodCard = ({ img_src, alt, title, editable, id }) => {
   const [userID, setUserID] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { loggedIn, loginUser, logoutUser } = useAuth();
   const navigate = useNavigate();
