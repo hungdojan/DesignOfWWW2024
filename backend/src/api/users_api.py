@@ -1,8 +1,11 @@
+from flask_login import login_required, current_user
 import api.recipes_api as rcp_api
 import api.shopping_lists_api as shl_api
 from api.recipes_api import fill_source
 from flask_restx import Namespace, Resource, fields, marshal
 from flask_restx.api import HTTPStatus
+from models.groups import GroupManager
+from models.shopping_list import ShoppingListManager
 from models.recipes import RecipeManager
 from models.users import UserManager, UserRole
 from utils import error_message, message_response_dict, response_ok
@@ -196,7 +199,7 @@ class UserGroupsAPI(Resource):
         return marshal(user.groups, grp_api.group_mdl["view"])
 
 
-@users_api_ns.route("/<_id>/shop_lists")
+@users_api_ns.route("/shop_lists")
 class UserShoppingListAPI(Resource):
 
     @users_api_ns.doc(description="Retrieve a list of all shopping lists.")
@@ -208,11 +211,37 @@ class UserShoppingListAPI(Resource):
     @users_api_ns.response(
         **message_response_dict("User not found.", "User not found.")
     )
-    def get(self, _id: str):
-        # TODO: require auth
-        user = UserManager.query_by_id(_id)
+    
+    @login_required
+    def get(self):
+        user = UserManager.query_by_id(current_user.id)
         if not user:
             return error_message("User not found.")
 
         shopping_lists = UserManager.retrieve_shopping_lists(user)
         return marshal(shopping_lists, shl_api.shop_list_mdl["short_view"])
+    
+    @users_api_ns.doc("Create a shopping list.")
+    @users_api_ns.expect(shl_api.shop_list_mdl["new"])
+    @users_api_ns.response(
+        HTTPStatus.CREATED,
+        "Success",
+        fields.String(example="shop_list_id"),
+        envelope="shopping_list_id"
+    )
+    @users_api_ns.response(
+        **message_response_dict("User not found.", "User not found.")
+    )
+
+    @login_required
+    def post(self):
+        user_id = current_user.id
+        user = UserManager.query_by_id(user_id)
+        if not user:
+            return error_message("User not found.")
+
+        data = users_api_ns.payload
+        group = GroupManager.insert_one(name=f"Group_{data['name']}", users=[])
+        GroupManager.add_users_to_group(group, [user_id])
+        shop_list = ShoppingListManager.insert_one(**data, groupID=group.ID, items=[])
+        return {"shopping_list_id": shop_list.ID}, HTTPStatus.CREATED
