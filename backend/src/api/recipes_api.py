@@ -98,6 +98,10 @@ recipe_mdl = {
             "ingredients": fields.List(fields.Nested(ing_api.ingred_mdl["view"])),
         },
     ),
+    "mult_ing": recipes_api_ns.model(
+        "MultipleIngredients",
+        {"ingredients": fields.List(fields.Nested(ing_api.ingred_mdl["new"]))},
+    ),
 }
 
 
@@ -184,6 +188,47 @@ class RecipeAPI(Resource):
 
         RecipeManager.delete_obj(recipe)
         return response_ok(f"Recipe {recipe.ID} deleted.")
+
+
+@recipes_api_ns.route("/<_id>/ingredients")
+@recipes_api_ns.doc(data={"_id": "Recipe's ID."})
+class RecipeIngredientsAPI(Resource):
+
+    @recipes_api_ns.doc(description="Retrieve all ingredients from recipe.")
+    @recipes_api_ns.response(
+        HTTPStatus.OK,
+        "Success.",
+        fields.List(fields.Nested(ing_api.ingred_mdl["view"])),
+    )
+    @recipes_api_ns.response(
+        **message_response_dict("Recipe not found", "Recipe not found.")
+    )
+    def get(self, _id: str):
+        recipe = RecipeManager.query_by_id(_id)
+        if not recipe:
+            return error_message("Recipe not found.")
+        return [i.as_dict() for i in recipe.ingredients]
+
+    @recipes_api_ns.doc(description="Add ingredients to a recipe.")
+    @recipes_api_ns.expect(recipe_mdl["mult_ing"])
+    @recipes_api_ns.response(
+        HTTPStatus.OK,
+        "Success.",
+        fields.String(example=["ingredient_id1", "ingredient_id2"]),
+        envelope="ingredient_ids",
+    )
+    @recipes_api_ns.response(
+        **message_response_dict("Recipe not found", "Recipe not found.")
+    )
+    def post(self, _id: str):
+        # TODO: require auth
+        data = recipes_api_ns.payload
+        recipe = RecipeManager.query_by_id(_id)
+        if not recipe:
+            return error_message("Recipe not found.")
+
+        ids = RecipeManager.insert_multiple_ingredients(recipe, data["ingredients"])
+        return {"ingredient_ids": ids}
 
 
 @recipes_api_ns.route("/<_id>/image")

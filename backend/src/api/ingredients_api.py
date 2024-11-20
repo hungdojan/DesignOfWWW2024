@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
-from models.ingredients import IngredientManager, UnitEnum
+from models.ingredients import IngredientManager
 from utils import error_message, message_response_dict, response_ok
 
 ingredients_api_ns = Namespace(
@@ -14,8 +14,7 @@ ingred_mdl = {
         "IngredientNew",
         {
             "name": fields.String,
-            "value": fields.Float,
-            "unit": fields.String(enum=[e.value for e in UnitEnum]),
+            "amount": fields.String,
         },
     ),
     "view": ingredients_api_ns.model(
@@ -24,8 +23,7 @@ ingred_mdl = {
             "ID": fields.String,
             "name": fields.String,
             "recipeID": fields.String,
-            "value": fields.Float,
-            "unit": fields.String(enum=[e.value for e in UnitEnum]),
+            "amount": fields.String,
         },
     ),
 }
