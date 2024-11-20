@@ -16,18 +16,14 @@ import {
 } from "@mui/material";
 import { Add, Remove, Delete, Edit } from "@mui/icons-material";
 import "./shoppingListPage.css";
+import axios from "axios";
 
 const ShoppingListPage = () => {
   const [shoppingLists, setShoppingLists] = useState([
     {
       id: 1,
-      name: "Groceries",
-      items: [{ id: 1, name: "Apple", quantity: 2 }],
-    },
-    {
-      id: 2,
-      name: "Stationery",
-      items: [{ id: 1, name: "Notebook", quantity: 5 }],
+      name: "Sample",
+      items: [{ id: 1, name: "Item", quantity: 2 }],
     },
   ]);
   const [newItemName, setNewItemName] = useState("");
@@ -38,6 +34,62 @@ const ShoppingListPage = () => {
   useEffect(() => {
     document.title = "Shopping List";
   }, []);
+  
+  useEffect(() => {
+    const fetchShoppingLists = async () => {
+      try {
+        const resp = await axios.get("/api/users/shop_lists");
+
+        const shoppingLists = resp.data.map((list) => ({
+          id: list.ID,
+          name: list.name,
+          items: [],
+        }));
+        console.log("Fetched shopping lists:", shoppingLists);
+
+        // fetch all items for each shopping list
+        const updatedShoppingLists = await Promise.all(
+          shoppingLists.map(async (list) => {
+            try {
+              const itemsResponse = await axios.get(`/api/shopping_lists/${list.id}/items`);
+                return {
+                ...list,
+                items: itemsResponse.data.map((item) => ({
+                  id: item.ID,
+                  name: item.name,
+                  quantity: item.total,
+                })),
+                };
+            } catch (error) {
+              console.error(`Error fetching items for list ${list.id}:`, error);
+              return list;
+            }
+          })
+        );
+
+        // Update the shopping lists with fetched items
+        console.log("Updated shopping lists:", updatedShoppingLists);
+        setShoppingLists(updatedShoppingLists);
+      } catch (error) {
+        console.error("Error fetching shopping lists:", error);
+      }
+    };
+
+    fetchShoppingLists();
+  }, []);
+
+
+  const addNewShoppingList = async () => {
+
+    const shoppingListData = { name: "New List"};
+
+    await axios
+      .post("/api/users/shop_lists", shoppingListData)
+      .then((response) => {
+        const shoppingListID = response.data.shopping_list_id;
+        console.log("Created new shopping list with id:", shoppingListID);
+      })
+  };
 
   // Edit the main displayed list name
   const handleEditListTitle = () => {
@@ -124,10 +176,7 @@ const ShoppingListPage = () => {
           variant="outlined"
           fullWidth
           onClick={() =>
-            setShoppingLists([
-              ...shoppingLists,
-              { id: Date.now(), name: "New List", items: [] },
-            ])
+            addNewShoppingList()
           }
           className="new-list-btn"
         >
