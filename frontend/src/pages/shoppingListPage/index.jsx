@@ -48,7 +48,6 @@ const ShoppingListPage = () => {
         name: list.name,
         items: [],
       }));
-      console.log("Fetched shopping lists:", shoppingLists);
 
       // fetch all items for each shopping list
       const updatedShoppingLists = await Promise.all(
@@ -70,8 +69,6 @@ const ShoppingListPage = () => {
         })
       );
 
-      // Update the shopping lists with fetched items
-      console.log("Updated shopping lists:", updatedShoppingLists);
       setShoppingLists(updatedShoppingLists);
     } catch (error) {
       console.error("Error fetching shopping lists:", error);
@@ -109,52 +106,58 @@ const ShoppingListPage = () => {
         console.error(`Error updating list ${currentListId} name:`, error);
     });
 
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === currentListId ? { ...list, name: editedListTitle } : list
-    );
-    setShoppingLists(updatedLists);
+    fetchShoppingLists();
     setIsEditingListTitle(false);
   };
 
-  const addItem = (listId, itemName) => {
+  const addItem = async (listId, itemName) => {
     if (itemName.trim() === "") return; // prevent adding empty items
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === listId
-        ? {
-            ...list,
-            items: [
-              ...list.items,
-              { id: Date.now(), name: itemName, quantity: 1 },
-            ],
-          }
-        : list
-    );
-    setShoppingLists(updatedLists);
+
+    const itemData = 	
+    {
+      total: 1,
+      name: itemName,
+      completed: false
+    }
+
+    await axios
+    .post(`/api//shopping_lists/${listId}/items`, itemData)
+    .then((response) => {
+      const shoppingListID = response.data.shopping_list_id;
+      console.log("Created new shopping list with id:", shoppingListID);
+    })
+
+    fetchShoppingLists();
   };
 
-  const updateItemQuantity = (listId, itemId, delta) => {
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === listId
-        ? {
-            ...list,
-            items: list.items.map((item) =>
-              item.id === itemId
-                ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-                : item
-            ),
-          }
-        : list
-    );
-    setShoppingLists(updatedLists);
+  const updateItemQuantity = async (listId, itemId, delta) => {
+
+    try {
+      const response = await axios.get(`/api/shop_items/${itemId}`);
+      const item = response.data;
+    
+      const updatedItem = {
+        ...item,
+        total: Math.max(1, item.total + delta),
+      };
+    
+      await axios.patch(`/api/shop_items/${itemId}`, updatedItem);
+    } catch (error) {
+      console.error(`Error handling item ${itemId}:`, error);
+    }
+
+    fetchShoppingLists();
   };
 
-  const deleteItem = (listId, itemId) => {
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === listId
-        ? { ...list, items: list.items.filter((item) => item.id !== itemId) }
-        : list
-    );
-    setShoppingLists(updatedLists);
+  const deleteItem = async (listId, itemId) => {
+
+    await axios
+      .delete(`/api/shopping_lists/${listId}/items/${itemId}`)
+      .catch((error) => {
+        console.error(`Error deleting item ${itemId} from list ${listId}:`, error);
+      });
+
+    fetchShoppingLists();
   };
 
   return (
