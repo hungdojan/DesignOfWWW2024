@@ -160,6 +160,17 @@ const ShoppingListPage = () => {
     fetchShoppingLists();
   };
 
+  const deleteShoppingList = async (listId) => {
+      
+    await axios
+      .delete(`/api/shopping_lists/${listId}`)
+      .catch((error) => {
+        console.error(`Error deleting list ${listId}:`, error);
+      });
+  
+      fetchShoppingLists();
+    }
+
   return (
   <>
     <Header />
@@ -182,6 +193,14 @@ const ShoppingListPage = () => {
               className={`list-item ${list.id === currentListId ? "selected" : ""}`}
             >
               <ListItemText primary={list.name} />
+
+            <IconButton
+              edge="end"
+              onClick={() => deleteShoppingList(list.id)}
+              className="action-button"
+            >
+              <Delete />
+            </IconButton>
             </ListItem>
           ))}
         </List>
