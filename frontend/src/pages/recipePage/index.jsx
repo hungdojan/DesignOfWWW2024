@@ -31,17 +31,35 @@ const RecipePage = () => {
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const fetchUserId = async () => {
-    try {
-      axios
-      .get("/api/auth/id")
-      .then((response) => {
-        setUserID(response.data.id);
-       });
-    } catch (error) {
-      console.error("Error fetching user ID:", error.response || error.message);
+  useEffect(() => {
+    const fetchLogInStatus = async () => {
+      try {
+        const response = await axios.get("/api/auth/status");
+        setLoggedIn(response.data.authenticated);
+      } catch (error) {
+        console.error("Error fetching login status:", error.response || error.message);
+      }
+    };
+  
+    fetchLogInStatus();
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      const fetchUserId = async () => {
+        try {
+          axios
+          .get("/api/auth/id")
+          .then((response) => {
+            setUserID(response.data.id);
+          });
+        } catch (error) {
+          console.error("Error fetching user ID:", error.response || error.message);
+        }
+      };
+      fetchUserId();
     }
-  };
+  }, [loggedIn]);
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
@@ -73,7 +91,6 @@ const RecipePage = () => {
   useEffect(() => {
     document.title = "Recipe";
     fetchRecipe();
-    fetchUserId();
   }, [id]);
 
   if (!recipe) {
