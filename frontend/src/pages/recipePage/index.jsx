@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { useAuth } from '../../components/authContext'; 
 import {
   Typography,
   Container,
@@ -26,23 +27,10 @@ const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userID, setUserID] = useState('');
-  const [loggedIn, setLoggedIn] = useState(false);
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchLogInStatus = async () => {
-      try {
-        const response = await axios.get("/api/auth/status");
-        setLoggedIn(response.data.authenticated);
-      } catch (error) {
-        console.error("Error fetching login status:", error.response || error.message);
-      }
-    };
-  
-    fetchLogInStatus();
-  }, []);
+  const { loggedIn, loginUser, logoutUser } = useAuth();
 
   useEffect(() => {
     if (loggedIn) {
