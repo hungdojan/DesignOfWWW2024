@@ -21,7 +21,7 @@ const FoodCard = ({ alt, title, editable, id }) => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    navigate('/recipe/edit');
+    navigate(`/recipe/edit/${id}`);
   };
 
   useEffect(() => {

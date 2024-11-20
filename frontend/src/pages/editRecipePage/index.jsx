@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import axios from 'axios';
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Typography,
   Container,
@@ -10,16 +11,76 @@ import "./editRecipePage.css";
 import { MdEdit } from "react-icons/md";
 
 const EditRecipePage = () => {
-  useEffect(() => {
-    document.title = "Edit Recipe";
-  }, []);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [userID, setUserID] = useState('');
+  const [imgSrc, setImgSrc] = useState(null);
   const [title, setTitle] = useState('');
-  const [difficulty, setDifficulty] = useState('');
+  const [difficulty, setDifficulty] = useState("Beginner");
   const [expectedTime, setExpectedTime] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+
+  const fetchUserId = async () => {
+    try {
+      axios
+      .get("/api/auth/id")
+      .then((response) => {
+        setUserID(response.data.id);
+       });
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
+    }
+  };
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/${id}/image/`);
+        if (response.data?.images_ids?.length > 0) {
+          const imageId = response.data.images_ids[0];
+          const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
+          const imageUrl = URL.createObjectURL(imageResponse.data);
+          setImgSrc(imageUrl);
+        } else {
+          console.log("No image IDs found in the response.");
+        }
+      } catch (error) {
+        console.error("Error fetching image", error);
+      }
+    };
+
+    fetchImage();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchRecipeData = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/${id}`);
+        const recipe = response.data;
+
+        setTitle(recipe.name);
+        setDifficulty(recipe.difficulty);
+        setExpectedTime(recipe.expectedTime);
+        setIngredients(recipe.ingredients.join("\n")); // TODO
+        setInstructions(recipe.instructions);
+        setDescription(recipe.description);
+        if (imgSrc) {
+          setImage(imgSrc);
+          const preview = document.getElementById('image-preview');
+          preview.src = imgSrc;
+          preview.style.display = 'block';
+        }
+
+      } catch (error) {
+        console.error("Error fetching recipe data:", error);
+      }
+    };
+
+    fetchRecipeData();
+  }, [id]);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -46,31 +107,83 @@ const EditRecipePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('difficulty', difficulty);
-    formData.append('expected-time', expectedTime);
-    formData.append('ingredients', ingredients);
-    formData.append('instructions', instructions);
-    formData.append('description', description);
-    if (image) {
-      formData.append('image', image);
-    }
+    try {
+      const ingredientsList = ingredients.split('\n').map(ingredient => {
+        const parts = ingredient.split(',').map(part => part.trim());
+        
+        if (parts.length === 3) {
+          const [name, value, unit] = parts;
+          return { 
+            name: name, 
+            value: parseFloat(value) || 0,
+            unit: unit 
+          };
+        } else {
+          return { name: "", value: 0, unit: "" };
+        }
+      }).filter(ingredient => ingredient.name !== "");
 
-    // reset from
-    setTitle('');
-    setDifficulty('');
-    setExpectedTime('');
-    setIngredients('');
-    setInstructions('');
-    setDescription('');
-    setImage(null);
+      const payload = {
+        name: title,
+        timeCreated: new Date().toISOString(),
+        expectedTime: expectedTime,
+        difficulty: difficulty,
+        description: description,
+        instructions: instructions,
+        ingredients: ingredientsList,
+      };
 
-    const preview = document.getElementById('image-preview');
-    if (preview) {
-      preview.style.display = 'none';
+      const response = await axios.post(`/api/users/${userID}/recipes`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      const recipeId = response.data.ID;
+
+      if (image) {
+        const formData = new FormData();
+        formData.append('file', image);
+    
+        await axios.post(`/api/recipes/${recipeId}/image/`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          withCredentials: true,
+        });
+        console.log('Image uploaded successfully!');
+      } else {
+        console.log('No image to upload.');
+      }
+
+      // reset form
+      setTitle('');
+      setDifficulty('');
+      setExpectedTime('');
+      setIngredients('');
+      setInstructions('');
+      setDescription('');
+      setImage(null);
+
+      const preview = document.getElementById('image-preview');
+      if (preview) {
+        preview.style.display = 'none';
+      }
+
+      alert("Succesfully edited your recipe!");
+    } catch (error) {
+      console.error("Error editting recipe:", error.response || error.message);
+      alert("Failed to edit recipe. Please try again.");
     }
   };
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
+  useEffect(() => {
+    document.title = "Edit Recipe";
+    fetchUserId();
+  }, []);
 
   return (
     <>
@@ -186,6 +299,7 @@ const EditRecipePage = () => {
           <button
             type="submit"
             className="cancel-button"
+            onClick={handleCancel}
             >Cancel</button>
           </div>
         </form>

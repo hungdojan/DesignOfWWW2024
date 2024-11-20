@@ -27,28 +27,24 @@ const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userID, setUserID] = useState('');
+  const [myRecipe, setMyRecipe] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      const fetchUserId = async () => {
-        try {
-          axios
-          .get("/api/auth/id")
-          .then((response) => {
-            setUserID(response.data.id);
-          });
-        } catch (error) {
-          console.error("Error fetching user ID:", error.response || error.message);
-        }
-      };
-      fetchUserId();
+  const fetchUserId = async () => {
+    try {
+      const response = await axios.get("/api/auth/id");
+      if(response) {
+        fetchUserRecipes(response.data.id);
+      }
+      setUserID(response.data.id);
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
     }
-  }, [isAuthenticated]);
+  };
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -71,7 +67,7 @@ const RecipePage = () => {
   }, [id]);
 
   const handleEditClick = () => {
-    navigate('/recipe/edit');
+    navigate(`/recipe/edit/${id}`);
   };
 
   const fetchRecipe = async () => {
@@ -80,6 +76,20 @@ const RecipePage = () => {
       setRecipe(response.data);
     } catch (err) {
       setError("Failed to fetch recipe.");
+    }
+  };
+
+  const fetchUserRecipes = async (_userID) => {
+    try {
+      const resp = await axios.get(`/api/users/${_userID}/recipes`);
+      console.log(resp.data);
+      if (resp.data.some(recipe => id === recipe.ID)) {
+        setMyRecipe(true);
+      } else {
+        setMyRecipe(false);
+      }
+    } catch (error) {
+      console.error("Error fetching user's recipes:", error.message);
     }
   };
 
@@ -100,7 +110,10 @@ const RecipePage = () => {
   useEffect(() => {
     document.title = "Recipe";
     fetchRecipe();
-  }, [id]);
+    if(isAuthenticated) {
+      fetchUserId();
+    }
+  }, [isAuthenticated]);
 
   if (!recipe) {
     return <div>Recipe not found.</div>;
@@ -164,28 +177,32 @@ const RecipePage = () => {
               ))}
             </Stack>
 
-            {/* Edit Button */}
-            <Box>
-              <Button
-                variant="outlined"
-                startIcon={<MdEdit />}
-                className="edit-button"
-                onClick={handleEditClick}
-              >
-                Edit Recipe
-              </Button>
-            </Box>
-            {/* Delete Button */}
-            <Box>
-              <Button
-                variant="outlined"
-                startIcon={<MdDelete />}
-                className="delete-button"
-                onClick={() => setDialogOpen(true)}
-              >
-                Delete Recipe
-              </Button>
-            </Box>
+            {myRecipe && (
+              <>
+                {/* Edit Button */}
+                <Box>
+                  <Button
+                    variant="outlined"
+                    startIcon={<MdEdit />}
+                    className="edit-button"
+                    onClick={handleEditClick}
+                  >
+                    Edit Recipe
+                  </Button>
+                </Box>
+                {/* Delete Button */}
+                <Box>
+                  <Button
+                    variant="outlined"
+                    startIcon={<MdDelete />}
+                    className="delete-button"
+                    onClick={() => setDialogOpen(true)}
+                  >
+                    Delete Recipe
+                  </Button>
+                </Box>
+              </>
+            )}
           </CardContent>
         </Card>
       </Container>

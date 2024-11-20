@@ -23,7 +23,7 @@ const App = () => {
       element: <AddRecipePage />,
     },
     {
-      path: "/recipe/edit",
+      path: "/recipe/edit/:id",
       element: <EditRecipePage />,
     },
     {
