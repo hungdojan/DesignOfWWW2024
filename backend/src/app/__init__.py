@@ -4,6 +4,7 @@ import mysql.connector
 from api import food_tips_api
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from models import DB
 
 from auth import login_manager
@@ -32,6 +33,10 @@ def create_app() -> Flask:
     )
 
     login_manager.init_app(app)
+
+    CORS(app, resources={r"/*": {"origins": "*"}})
+    app.url_map.strict_slashes = False
+
 
     food_tips_api.init_app(app)
     DB.init_app(app)
