@@ -13,13 +13,29 @@ const AddRecipePage = () => {
   useEffect(() => {
     document.title = "Add Recipe";
   }, []);
+
+  const [userID, setUserID] = useState('');
   const [title, setTitle] = useState('');
-  const [difficulty, setDifficulty] = useState('');
+  const [difficulty, setDifficulty] = useState('Beginner');
   const [expectedTime, setExpectedTime] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+
+  const fetchUserId = async () => {
+    try {
+      axios
+      .get("/api/auth/id")
+      .then((response) => {
+        setUserID(response.data.id);
+       });
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
+    }
+  };
+
+  fetchUserId();
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -46,29 +62,59 @@ const AddRecipePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('difficulty', difficulty);
-    formData.append('expected-time', expectedTime);
-    formData.append('ingredients', ingredients);
-    formData.append('instructions', instructions);
-    formData.append('description', description);
-    if (image) {
-      formData.append('image', image);
-    }
+    try {
+      const ingredientsList = ingredients.split('\n').map(ingredient => {
+        const parts = ingredient.split(',').map(part => part.trim());
+        
+        if (parts.length === 3) {
+          const [name, value, unit] = parts;
+          return { 
+            name: name, 
+            value: parseFloat(value) || 0,
+            unit: unit 
+          };
+        } else {
+          return { name: "", value: 0, unit: "" };
+        }
+      }).filter(ingredient => ingredient.name !== "");
 
-    // reset from
-    setTitle('');
-    setDifficulty('');
-    setExpectedTime('');
-    setIngredients('');
-    setInstructions('');
-    setDescription('');
-    setImage(null);
+      const payload = {
+        name: title,
+        timeCreated: new Date().toISOString(),
+        expectedTime: expectedTime,
+        difficulty: difficulty,
+        description: description,
+        instructions: instructions,
+        ingredients: ingredientsList,
+      };
 
-    const preview = document.getElementById('image-preview');
-    if (preview) {
-      preview.style.display = 'none';
+      const response = await axios.post(`/api/users/${userID}/recipes`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+
+      // TODO image
+
+      // reset form
+      setTitle('');
+      setDifficulty('');
+      setExpectedTime('');
+      setIngredients('');
+      setInstructions('');
+      setDescription('');
+      setImage(null);
+
+      const preview = document.getElementById('image-preview');
+      if (preview) {
+        preview.style.display = 'none';
+      }
+
+      alert("Succesfully added new recipe!");
+    } catch (error) {
+      console.error("Error adding recipe:", error.response || error.message);
+      alert("Failed to add recipe. Please try again.");
     }
   };
 

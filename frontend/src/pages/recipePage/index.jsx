@@ -25,9 +25,23 @@ import "./recipePage.css";
 const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [userID, setUserID] = useState('');
   const [recipe, setRecipe] = useState(null);
   const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const fetchUserId = async () => {
+    try {
+      axios
+      .get("/api/auth/id")
+      .then((response) => {
+        setUserID(response.data.id);
+       });
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
+    }
+  };
+  fetchUserId();
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
@@ -45,11 +59,10 @@ const RecipePage = () => {
   const handleDelete = async () => {
     try {
       if (recipe.imageUrl) {
-        await axios.delete(`/api/recipes/${id}/image/${recipe.ID}/`);
+        await axios.delete(`/api/recipes/${userID}/image/${recipe.ID}/`);
       }
-      await axios.delete(`/api/recipes/${id}/`);
-
-      navigate("/api/recipes");
+      await axios.delete(`/api/recipes/${id}`);
+      navigate("/recipe/my_list");
     } catch (err) {
       console.error("Failed to delete recipe:", err);
     } finally {
@@ -176,8 +189,6 @@ const RecipePage = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-
       <Footer />
     </Box>
   );

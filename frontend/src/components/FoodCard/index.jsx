@@ -13,11 +13,22 @@ import { MdStar } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const FoodCard = ({ img_src, alt, title, editable, id }) => {
+  const [userID, setUserID] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
 
-  // TODO for current user
-  const uid = "e3e8248b-9419-49bc-a9c2-20cd352345c9";
+  const fetchUserId = async () => {
+    try {
+      axios
+      .get("/api/auth/id")
+      .then((response) => {
+        setUserID(response.data.id);
+       });
+    } catch (error) {
+      console.error("Error fetching user ID:", error.response || error.message);
+    }
+  };
+  fetchUserId();
 
   const handleEditClick = () => {
     navigate('/recipe/edit');
@@ -25,7 +36,7 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
 
   const checkIfFavorite = async () => {
     try {
-      const response = await axios.get(`/api/favorites/favorite_recipes/${uid}`);
+      const response = await axios.get(`/api/favorites/favorite_recipes/${userID}`);
       setIsFavorite(response.data.some(recipe => recipe.ID === id));
     } catch (error) {
       console.error("Error fetching favorites:", error);
@@ -35,11 +46,11 @@ const FoodCard = ({ img_src, alt, title, editable, id }) => {
   const toggleFavorite = async () => {
     try {
       if (isFavorite) {
-        await axios.delete(`/api/favorites/users/${uid}/delete/${id}`);
+        await axios.delete(`/api/favorites/users/${userID}/delete/${id}`);
         setIsFavorite(false);
       } else {
         await axios.post(
-          `/api/favorites/favorite_recipes/${uid}`,
+          `/api/favorites/favorite_recipes/${userID}`,
           { recipe_id: id }
         );
         setIsFavorite(true);
