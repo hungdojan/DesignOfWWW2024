@@ -1,3 +1,4 @@
+from flask_login import login_required
 import api.shopping_items_api as shi_api
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
@@ -58,8 +59,9 @@ class ShoppingListAPI(Resource):
         HTTPStatus.OK, "Success", shop_list_mdl["full_view"]
     )
     @shopping_lists_api_ns.doc(description="Retrieve shopping list data.")
+
+    @login_required
     def get(self, _id: str):
-        # TODO: require auth
         shopping_list = ShoppingListManager.query_by_id(_id)
         if not shopping_list:
             return error_message("Shopping list not found.")
@@ -73,8 +75,9 @@ class ShoppingListAPI(Resource):
     @shopping_lists_api_ns.response(
         **message_response_dict("Shopping list not found.", "Shopping list not found.")
     )
+
+    @login_required
     def patch(self, _id: str):
-        # TODO: require auth
         data = shopping_lists_api_ns.payload
 
         shop_list = ShoppingListManager.query_by_id(_id)
@@ -90,8 +93,9 @@ class ShoppingListAPI(Resource):
             "Operation result.", "Shopping list shop_list_id deleted.", HTTPStatus.OK
         )
     )
+
+    @login_required
     def delete(self, _id: str):
-        # TODO: require auth
         shop_list = ShoppingListManager.query_by_id(_id)
         if not shop_list:
             return response_ok("Nothing deleted")
@@ -100,7 +104,7 @@ class ShoppingListAPI(Resource):
         return response_ok(f"Shopping list {_id} deleted.")
 
 
-@shopping_lists_api_ns.route("<_id>/items")
+@shopping_lists_api_ns.route("/<_id>/items")
 @shopping_lists_api_ns.doc(params={"_id": "Shopping list's ID."})
 class ShoppingListItemAPI(Resource):
 
@@ -113,8 +117,9 @@ class ShoppingListItemAPI(Resource):
     @shopping_lists_api_ns.response(
         **message_response_dict("Shopping list not found.", "Shopping list not found.")
     )
+
+    @login_required
     def get(self, _id: str):
-        # TODO: require auth
         shop_list = ShoppingListManager.query_by_id(_id)
         if not shop_list:
             return error_message("Shopping list not found.")
@@ -130,8 +135,9 @@ class ShoppingListItemAPI(Resource):
     @shopping_lists_api_ns.response(
         **message_response_dict("Shopping list not found.", "Shopping list not found.")
     )
+
+    @login_required
     def post(self, _id: str):
-        # TODO: require auth
         data = shopping_lists_api_ns.payload
         shop_list = ShoppingListManager.query_by_id(_id)
         if not shop_list:
@@ -141,7 +147,7 @@ class ShoppingListItemAPI(Resource):
         return {"message": "Item successfully added."}, HTTPStatus.CREATED
 
 
-@shopping_lists_api_ns.route("<_id>/items/<item_id>")
+@shopping_lists_api_ns.route("/<_id>/items/<item_id>")
 @shopping_lists_api_ns.doc(
     params={"_id": "Shopping list's ID.", "item_id": "Shopping item's ID."}
 )
@@ -155,8 +161,9 @@ class ShoppingListItemDeleteAPI(Resource):
     @shopping_lists_api_ns.response(
         **message_response_dict("Shopping list not found.", "Shopping list not found.")
     )
+
+    @login_required
     def delete(self, _id: str, item_id: str):
-        # TODO: require auth
         shop_list = ShoppingListManager.query_by_id(_id)
         if not shop_list:
             return error_message("Shopping list not found.")
