@@ -99,7 +99,16 @@ const ShoppingListPage = () => {
     setIsEditingListTitle(true);
   };
 
-  const saveListTitle = () => {
+  const saveListTitle = async () => {
+
+    await axios
+      .patch(`/api/shopping_lists/${currentListId}`, {
+        name: editedListTitle,
+      })
+      .catch ((error) => {
+        console.error(`Error updating list ${currentListId} name:`, error);
+    });
+
     const updatedLists = shoppingLists.map((list) =>
       list.id === currentListId ? { ...list, name: editedListTitle } : list
     );
