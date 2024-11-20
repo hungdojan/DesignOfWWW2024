@@ -34,50 +34,49 @@ const ShoppingListPage = () => {
   useEffect(() => {
     document.title = "Shopping List";
   }, []);
-  
+
   useEffect(() => {
-    const fetchShoppingLists = async () => {
-      try {
-        const resp = await axios.get("/api/users/shop_lists");
-
-        const shoppingLists = resp.data.map((list) => ({
-          id: list.ID,
-          name: list.name,
-          items: [],
-        }));
-        console.log("Fetched shopping lists:", shoppingLists);
-
-        // fetch all items for each shopping list
-        const updatedShoppingLists = await Promise.all(
-          shoppingLists.map(async (list) => {
-            try {
-              const itemsResponse = await axios.get(`/api/shopping_lists/${list.id}/items`);
-                return {
-                ...list,
-                items: itemsResponse.data.map((item) => ({
-                  id: item.ID,
-                  name: item.name,
-                  quantity: item.total,
-                })),
-                };
-            } catch (error) {
-              console.error(`Error fetching items for list ${list.id}:`, error);
-              return list;
-            }
-          })
-        );
-
-        // Update the shopping lists with fetched items
-        console.log("Updated shopping lists:", updatedShoppingLists);
-        setShoppingLists(updatedShoppingLists);
-      } catch (error) {
-        console.error("Error fetching shopping lists:", error);
-      }
-    };
-
     fetchShoppingLists();
   }, []);
+  
+  const fetchShoppingLists = async () => {
+    try {
+      const resp = await axios.get("/api/users/shop_lists");
 
+      const shoppingLists = resp.data.map((list) => ({
+        id: list.ID,
+        name: list.name,
+        items: [],
+      }));
+      console.log("Fetched shopping lists:", shoppingLists);
+
+      // fetch all items for each shopping list
+      const updatedShoppingLists = await Promise.all(
+        shoppingLists.map(async (list) => {
+          try {
+            const itemsResponse = await axios.get(`/api/shopping_lists/${list.id}/items`);
+              return {
+              ...list,
+              items: itemsResponse.data.map((item) => ({
+                id: item.ID,
+                name: item.name,
+                quantity: item.total,
+              })),
+              };
+          } catch (error) {
+            console.error(`Error fetching items for list ${list.id}:`, error);
+            return list;
+          }
+        })
+      );
+
+      // Update the shopping lists with fetched items
+      console.log("Updated shopping lists:", updatedShoppingLists);
+      setShoppingLists(updatedShoppingLists);
+    } catch (error) {
+      console.error("Error fetching shopping lists:", error);
+    }
+  };
 
   const addNewShoppingList = async () => {
 
@@ -89,6 +88,8 @@ const ShoppingListPage = () => {
         const shoppingListID = response.data.shopping_list_id;
         console.log("Created new shopping list with id:", shoppingListID);
       })
+
+    fetchShoppingLists();
   };
 
   // Edit the main displayed list name
