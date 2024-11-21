@@ -14,7 +14,7 @@ const AddRecipePage = () => {
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState("Beginner");
   const [expectedTime, setExpectedTime] = useState('');
-  const [ingredients, setIngredients] = useState('');
+  const [ingredients, setIngredients] = useState([{ name: "", amount: "" }]);
   const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
@@ -52,6 +52,21 @@ const AddRecipePage = () => {
     const textarea = e.target;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
+  };
+
+  const handleIngredientChange = (index, field, value) => {
+    const updatedIngredients = [...ingredients];
+    updatedIngredients[index][field] = value;
+    setIngredients(updatedIngredients);
+  };
+
+  const handleAddIngredient = () => {
+    setIngredients([...ingredients, { name: "", amount: "" }]);
+  };
+
+  const handleRemoveIngredient = (index) => {
+    const updatedIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(updatedIngredients);
   };
 
   const handleSubmit = async (e) => {
@@ -187,15 +202,40 @@ const AddRecipePage = () => {
 
           <div className="one-item">
             <label htmlFor="ingredients">Ingredients</label>
-            <textarea
-              id="ingredients"
-              value={ingredients}
-              className="input-field"
-              onChange={(e) => setIngredients(e.target.value)}
-              placeholder="List ingredients separated by enter"
-              onInput={handleResize}
-              required
-            />
+            <div className="ingredients-section">
+              {ingredients.map((ingredient, index) => (
+                <div key={index} className="ingredient-item">
+                  <input
+                    type="text"
+                    value={ingredient.name}
+                    placeholder="Ingredient name"
+                    className="input-ingredient"
+                    onChange={(e) =>
+                      handleIngredientChange(index, "name", e.target.value)
+                    }
+                  />
+                  <input
+                    type="text"
+                    value={ingredient.amount}
+                    placeholder="Amount"
+                    className="input-ingredient"
+                    onChange={(e) =>
+                      handleIngredientChange(index, "amount", e.target.value)
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveIngredient(index)}
+                    className="ingredient-btn"
+                  >-</button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleAddIngredient}
+              className="add-ingredient-btn"
+            >+</button>
           </div>
 
           <div className="one-item">

@@ -81,6 +81,64 @@
     width: 550px;
 }
 
+.add-form .one-item .ingredients-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-left: 22px;
+}
+
+.add-form .ingredient-item {
+    display: flex;
+    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.add-form .input-ingredient {
+    flex: 1;
+    border-color: var(--my-light-green);
+    border-radius: 5px;
+    color: var(--my-dark-brown);
+    padding: 8px;
+    margin: 5px 0;
+}
+
+.add-form .ingredient-btn {
+    font-size: 20px;
+    background-color: var(--my-light-brown);
+    color: color;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+    max-width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-form .add-ingredient-btn {
+    font-size: 20px;
+    background-color: var(--my-light-green);
+    color: white;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.add-form .ingredient-btn:hover {
+    background-color: var(--my-dark-brown);
+}
+
+.add-form .add-ingredient-btn:hover {
+    background-color: var(--my-light-blue);
+}
+
 .add-form .input-field-instruction {
     border-color: var(--my-light-green);
     border-radius: 5px;
@@ -157,6 +215,30 @@
         min-height: 50px;
         overflow: hidden;
         resize: none;
+    }
+
+    .add-form .one-item .ingredients-section {
+        margin: 0;
+    }
+
+    .add-form .ingredient-item {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .add-form .input-ingredient {
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .add-form .ingredient-btn,
+    .add-form .add-ingredient-btn {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 8px;
     }
 
     .add-form .input-field-instruction {
