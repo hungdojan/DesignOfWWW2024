@@ -225,6 +225,8 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
+        border-bottom: 2px dashed var(--my-light-blue);
+        margin-bottom: 8px;
     }
 
     .add-form .input-ingredient {

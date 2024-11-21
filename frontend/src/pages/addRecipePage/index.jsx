@@ -73,21 +73,6 @@ const AddRecipePage = () => {
     e.preventDefault();
 
     try {
-      const ingredientsList = ingredients.split('\n').map(ingredient => {
-        const parts = ingredient.split(',').map(part => part.trim());
-        
-        if (parts.length === 3) {
-          const [name, value, unit] = parts;
-          return { 
-            name: name, 
-            value: parseFloat(value) || 0,
-            unit: unit 
-          };
-        } else {
-          return { name: "", value: 0, unit: "" };
-        }
-      }).filter(ingredient => ingredient.name !== "");
-
       const payload = {
         name: title,
         timeCreated: new Date().toISOString(),
@@ -95,7 +80,10 @@ const AddRecipePage = () => {
         difficulty: difficulty,
         description: description,
         instructions: instructions,
-        ingredients: ingredientsList,
+        ingredients: ingredients.map((ingredient) => ({
+          name: ingredient.name,
+          amount: ingredient.amount,
+        })),
       };
 
       const response = await axios.post(`/api/users/${userID}/recipes`, payload, {
@@ -124,7 +112,7 @@ const AddRecipePage = () => {
       setTitle('');
       setDifficulty('');
       setExpectedTime('');
-      setIngredients('');
+      setIngredients([{ name: "", amount: "" }]);
       setInstructions('');
       setDescription('');
       setImage(null);
