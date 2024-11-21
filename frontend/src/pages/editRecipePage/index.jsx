@@ -13,8 +13,8 @@ import { MdEdit } from "react-icons/md";
 const EditRecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [userID, setUserID] = useState('');
   const [imgSrc, setImgSrc] = useState(null);
+  const [imgID, setImgID] = useState('');
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState("Beginner");
   const [expectedTime, setExpectedTime] = useState('');
@@ -22,18 +22,7 @@ const EditRecipePage = () => {
   const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
-
-  const fetchUserId = async () => {
-    try {
-      axios
-      .get("/api/auth/id")
-      .then((response) => {
-        setUserID(response.data.id);
-       });
-    } catch (error) {
-      console.error("Error fetching user ID:", error.response || error.message);
-    }
-  };
+  const [render, setRender] = useState(false);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -43,6 +32,7 @@ const EditRecipePage = () => {
           const imageId = response.data.images_ids[0];
           const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
           const imageUrl = URL.createObjectURL(imageResponse.data);
+          setImgID(imageId);
           setImgSrc(imageUrl);
         } else {
           console.log("No image IDs found in the response.");
@@ -50,51 +40,47 @@ const EditRecipePage = () => {
       } catch (error) {
         console.error("Error fetching image", error);
       }
+      setRender(true);
     };
 
     fetchImage();
   }, [id]);
 
-  useEffect(() => {
-    const fetchRecipeData = async () => {
-      try {
-        const response = await axios.get(`/api/recipes/${id}`);
-        const recipe = response.data;
+  const fetchRecipeData = async () => {
+    try {
+      const response = await axios.get(`/api/recipes/${id}`);
+      const recipe = response.data;
 
-        setTitle(recipe.name);
-        setDifficulty(recipe.difficulty);
-        setExpectedTime(recipe.expectedTime);
-        setIngredients(recipe.ingredients.join("\n")); // TODO
-        setInstructions(recipe.instructions);
-        setDescription(recipe.description);
-        if (imgSrc) {
-          setImage(imgSrc);
-          const preview = document.getElementById('image-preview');
-          preview.src = imgSrc;
-          preview.style.display = 'block';
-        }
-
-      } catch (error) {
-        console.error("Error fetching recipe data:", error);
+      setTitle(recipe.name);
+      setDifficulty(recipe.difficulty);
+      setExpectedTime(recipe.expectedTime);
+      setIngredients(recipe.ingredients.join("\n")); // TODO
+      setInstructions(recipe.instructions);
+      setDescription(recipe.description);
+      if (imgSrc) {
+        setImage(imgSrc);
+        const preview = document.getElementById('image-preview');
+        preview.src = imgSrc;
+        preview.style.display = 'block';
       }
-    };
 
-    fetchRecipeData();
-  }, [id]);
+    } catch (error) {
+      console.error("Error fetching recipe data:", error);
+    }
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
 
     if (file) {
       const reader = new FileReader();
-
       reader.onloadend = () => {
         const preview = document.getElementById('image-preview');
         preview.src = reader.result;
         preview.style.display = 'block';
       };
-
       reader.readAsDataURL(file);
+      setImage(file);
     }
   };
 
@@ -125,7 +111,6 @@ const EditRecipePage = () => {
 
       const payload = {
         name: title,
-        timeCreated: new Date().toISOString(),
         expectedTime: expectedTime,
         difficulty: difficulty,
         description: description,
@@ -133,20 +118,26 @@ const EditRecipePage = () => {
         ingredients: ingredientsList,
       };
 
-      const response = await axios.post(`/api/users/${userID}/recipes`, payload, {
+      const response = await axios.patch(`/api/recipes/${id}`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true,
       });
 
-      const recipeId = response.data.ID;
-
       if (image) {
+        // delete old image
+        if (imgSrc) {
+          const delete_resp = await axios.delete(`/api/recipes/${id}/image/${imgID}`);
+          if (delete_resp.status === 200) {
+            console.log("Image deleted successfully:", delete_resp.data.message);
+          }
+        }
+
+        // upload new image
         const formData = new FormData();
         formData.append('file', image);
-    
-        await axios.post(`/api/recipes/${recipeId}/image/`, formData, {
+        await axios.post(`/api/recipes/${id}/image/`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         });
@@ -170,20 +161,24 @@ const EditRecipePage = () => {
       }
 
       alert("Succesfully edited your recipe!");
+      navigate(-1);
     } catch (error) {
       console.error("Error editting recipe:", error.response || error.message);
       alert("Failed to edit recipe. Please try again.");
     }
   };
 
-  const handleCancel = () => {
+  const handleCancel = (e) => {
+    e.preventDefault();
     navigate(-1);
   };
 
   useEffect(() => {
     document.title = "Edit Recipe";
-    fetchUserId();
-  }, []);
+    if (render) {
+      fetchRecipeData();
+    }
+  }, [render]);
 
   return (
     <>

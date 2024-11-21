@@ -48,8 +48,6 @@ const FoodCard = ({ alt, title, editable, id }) => {
           const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
           const imageUrl = URL.createObjectURL(imageResponse.data);
           setImgSrc(imageUrl);
-        } else {
-          console.log("No image IDs found in the response.");
         }
       } catch (error) {
         console.error("Error fetching image", error);
