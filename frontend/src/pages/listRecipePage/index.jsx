@@ -56,17 +56,21 @@ const ListRecipePage = () => {
       </Typography>
       <Container maxWidth="md">
         <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
-          {recipes.map((recipe) => (
-            <Grid2 item key={recipe.ID}>
-              <FoodCard
-                img_src={recipe.imageUrl}
-                alt={`Recipe ${recipe.name}`}
-                title={recipe.name}
-                editable={true}
-                id={recipe.ID}
-              />
-            </Grid2>
-          ))}
+          {recipes.length > 0 ? (
+            recipes.map((recipe) => (
+              <Grid2 item key={recipe.ID}>
+                <FoodCard
+                  img_src={recipe.imageUrl}
+                  alt={`Recipe ${recipe.name}`}
+                  title={recipe.name}
+                  editable={true}
+                  id={recipe.ID}
+                />
+              </Grid2>
+            ))
+          ) : (
+            <Typography className="empty">You didn't create any recipes.</Typography>
+          )}
         </Grid2>
       </Container>
       <Footer />

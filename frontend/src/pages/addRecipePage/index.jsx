@@ -164,7 +164,7 @@ const AddRecipePage = () => {
             >
               <option value="Beginner">Beginner</option>
               <option value="Intermediate">Intermediate</option>
-              <option value="Expert">Expert</option>
+              <option value="Advance">Advance</option>
             </select>
           </div>
 
