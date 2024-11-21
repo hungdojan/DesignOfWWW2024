@@ -245,3 +245,26 @@ class UserShoppingListAPI(Resource):
         GroupManager.add_users_to_group(group, [user_id])
         shop_list = ShoppingListManager.insert_one(**data, groupID=group.ID, items=[])
         return {"shopping_list_id": shop_list.ID}, HTTPStatus.CREATED
+
+@users_api_ns.route("/email/<_email>")
+class UserByEmailAPI(Resource):
+
+    @users_api_ns.doc(description="Retrieve user ID by email.")
+    @users_api_ns.response(
+        HTTPStatus.OK,
+        "Success",
+        fields.String(example="user_id"),
+        envelope="user_id"
+    )
+    @users_api_ns.response(
+        **message_response_dict("User not found.", "User not found.")
+    )
+
+    @login_required
+    def get(self, _email: str):
+        user = UserManager.query_by_email(_email)
+        if not user:
+            return error_message("User not found."), HTTPStatus.NOT_FOUND
+
+        return {"user_id": user.ID}, HTTPStatus.OK
+

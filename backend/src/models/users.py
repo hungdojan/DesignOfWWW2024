@@ -78,3 +78,10 @@ class UserManager(BaseManager[Users]):
         res = DB.session.execute(_select).scalars().all()
         res = [sl for sl in res]
         return res
+    
+    @classmethod
+    def query_by_email(cls, email: str) -> Optional[Users]:
+
+        return DB.session.execute(
+            select(Users).where(Users.email == email)
+        ).scalar_one_or_none()
