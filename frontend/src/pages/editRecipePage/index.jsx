@@ -116,10 +116,6 @@ const EditRecipePage = () => {
         difficulty: difficulty,
         description: description,
         instructions: instructions,
-        ingredients: ingredients.map((ingredient) => ({
-          name: ingredient.name,
-          amount: ingredient.amount,
-        })),
       };
 
       const response = await axios.patch(`/api/recipes/${id}`, payload, {
@@ -152,7 +148,7 @@ const EditRecipePage = () => {
 
       // reset form
       setTitle('');
-      setDifficulty('');
+      setDifficulty("Beginner");
       setExpectedTime('');
       setIngredients([{ name: "", amount: "" }]);
       setInstructions('');
@@ -250,6 +246,7 @@ const EditRecipePage = () => {
                     onChange={(e) =>
                       handleIngredientChange(index, "name", e.target.value)
                     }
+                    required
                   />
                   <input
                     type="text"
@@ -259,6 +256,7 @@ const EditRecipePage = () => {
                     onChange={(e) =>
                       handleIngredientChange(index, "amount", e.target.value)
                     }
+                    required
                   />
                   <button
                     type="button"

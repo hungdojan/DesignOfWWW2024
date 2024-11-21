@@ -139,6 +139,7 @@ const RecipePage = () => {
               <Typography>Difficulty: <span className="highlight">{recipe.difficulty}</span></Typography>
               <Typography>Expected Time: <span className="highlight">{recipe.expectedTime} minutes</span></Typography>
             </div>
+
             {/* Ingredients Section */}
             <Typography variant="h5" component="div" className="subtitle">
               Ingredients
@@ -146,7 +147,12 @@ const RecipePage = () => {
             <Stack component="ul" spacing={1} className="ingredients-list">
               {recipe.ingredients.map((ingredient, index) => (
                 <Box component="li" key={index}>
-                  <Typography variant="body1">{ingredient.name}</Typography>
+                  <Typography variant="body1">
+                    {ingredient.name}
+                    <span className="amount">
+                      ({ingredient.amount})
+                    </span>
+                  </Typography>
                 </Box>
               ))}
             </Stack>

@@ -63,6 +63,11 @@
     margin: 6px 0;
 }
 
+.recipe-box .ingredients-list .amount {
+    margin-left: 6px;
+    color: var(--my-light-blue-shadow);
+}
+
 .recipe-box .ingredients-list li {
     color: var(--my-dark-brown);
     font-style: italic; 

@@ -110,7 +110,7 @@ const AddRecipePage = () => {
 
       // reset form
       setTitle('');
-      setDifficulty('');
+      setDifficulty("Beginner");
       setExpectedTime('');
       setIngredients([{ name: "", amount: "" }]);
       setInstructions('');
@@ -201,6 +201,7 @@ const AddRecipePage = () => {
                     onChange={(e) =>
                       handleIngredientChange(index, "name", e.target.value)
                     }
+                    required
                   />
                   <input
                     type="text"
@@ -210,6 +211,7 @@ const AddRecipePage = () => {
                     onChange={(e) =>
                       handleIngredientChange(index, "amount", e.target.value)
                     }
+                    required
                   />
                   <button
                     type="button"
