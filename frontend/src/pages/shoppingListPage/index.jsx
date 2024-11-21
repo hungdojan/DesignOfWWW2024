@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import AddUserModal from "../../components/AddUserModal";
 import {
   Box,
   Typography,
@@ -171,6 +172,36 @@ const ShoppingListPage = () => {
       fetchShoppingLists();
     }
 
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalError, setModalError] = useState("");
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+    setModalError("");
+  }
+  const handleCloseModal = () => setModalOpen(false);
+
+  const handleAddUser = async (email) => {
+    // console.log(`Attempting to add ${email}`);
+
+    try {
+
+      const userResponse = await axios.get(`/api/users/email/${email}`);
+      const userId = userResponse.data.user_id;
+      // console.log(`User ID retrieved: ${userId}`);
+
+      const listResponse = await axios.get(`/api/shopping_lists/${currentListId}`);
+      const groupId = listResponse.data.groupID;
+  
+      await axios.post(`/api/groups/${groupId}/users`, { user_ids: [userId].join(",") });
+  
+      setModalError("");
+      setModalOpen(false);
+    } catch (err) {
+      setModalError(err.response?.data?.message || "This email is not valid");
+    }
+  };
+
   return (
   <>
     <Header />
@@ -194,6 +225,21 @@ const ShoppingListPage = () => {
             >
               <ListItemText primary={list.name} />
 
+            <IconButton
+              edge="end"
+              onClick={handleOpenModal}
+              className="action-button"
+            >
+              <Add />
+            </IconButton>
+
+            <AddUserModal
+              open={isModalOpen}
+              onClose={handleCloseModal}
+              onAdd={handleAddUser}
+              error={modalError} 
+            />
+            
             <IconButton
               edge="end"
               onClick={() => deleteShoppingList(list.id)}
