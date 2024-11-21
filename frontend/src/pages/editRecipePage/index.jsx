@@ -18,7 +18,7 @@ const EditRecipePage = () => {
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState("Beginner");
   const [expectedTime, setExpectedTime] = useState('');
-  const [ingredients, setIngredients] = useState('');
+  const [ingredients, setIngredients] = useState([{ name: "", amount: "" }]);
   const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
@@ -50,11 +50,12 @@ const EditRecipePage = () => {
     try {
       const response = await axios.get(`/api/recipes/${id}`);
       const recipe = response.data;
+      const ingredientsResp= await axios.get(`/api/recipes/${id}/ingredients`);
 
       setTitle(recipe.name);
       setDifficulty(recipe.difficulty);
       setExpectedTime(recipe.expectedTime);
-      setIngredients(recipe.ingredients.join("\n")); // TODO
+      setIngredients(ingredientsResp.data);
       setInstructions(recipe.instructions);
       setDescription(recipe.description);
       if (imgSrc) {
@@ -90,32 +91,35 @@ const EditRecipePage = () => {
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
+  const handleIngredientChange = (index, field, value) => {
+    const updatedIngredients = [...ingredients];
+    updatedIngredients[index][field] = value;
+    setIngredients(updatedIngredients);
+  };
+
+  const handleAddIngredient = () => {
+    setIngredients([...ingredients, { name: "", amount: "" }]);
+  };
+
+  const handleRemoveIngredient = (index) => {
+    const updatedIngredients = ingredients.filter((_, i) => i !== index);
+    setIngredients(updatedIngredients);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const ingredientsList = ingredients.split('\n').map(ingredient => {
-        const parts = ingredient.split(',').map(part => part.trim());
-        
-        if (parts.length === 3) {
-          const [name, value, unit] = parts;
-          return { 
-            name: name, 
-            value: parseFloat(value) || 0,
-            unit: unit 
-          };
-        } else {
-          return { name: "", value: 0, unit: "" };
-        }
-      }).filter(ingredient => ingredient.name !== "");
-
       const payload = {
         name: title,
         expectedTime: expectedTime,
         difficulty: difficulty,
         description: description,
         instructions: instructions,
-        ingredients: ingredientsList,
+        ingredients: ingredients.map((ingredient) => ({
+          name: ingredient.name,
+          amount: ingredient.amount,
+        })),
       };
 
       const response = await axios.patch(`/api/recipes/${id}`, payload, {
@@ -150,7 +154,7 @@ const EditRecipePage = () => {
       setTitle('');
       setDifficulty('');
       setExpectedTime('');
-      setIngredients('');
+      setIngredients([{ name: "", amount: "" }]);
       setInstructions('');
       setDescription('');
       setImage(null);
@@ -235,15 +239,40 @@ const EditRecipePage = () => {
 
           <div className="one-item">
             <label htmlFor="ingredients">Ingredients</label>
-            <textarea
-              id="ingredients"
-              value={ingredients}
-              className="input-field"
-              onChange={(e) => setIngredients(e.target.value)}
-              placeholder="List ingredients separated by enter"
-              onInput={handleResize}
-              required
-            />
+            <div className="ingredients-section">
+              {ingredients.map((ingredient, index) => (
+                <div key={index} className="ingredient-item">
+                  <input
+                    type="text"
+                    value={ingredient.name}
+                    placeholder="Ingredient name"
+                    className="input-ingredient"
+                    onChange={(e) =>
+                      handleIngredientChange(index, "name", e.target.value)
+                    }
+                  />
+                  <input
+                    type="text"
+                    value={ingredient.amount}
+                    placeholder="Amount"
+                    className="input-ingredient"
+                    onChange={(e) =>
+                      handleIngredientChange(index, "amount", e.target.value)
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveIngredient(index)}
+                    className="ingredient-btn"
+                  >-</button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={handleAddIngredient}
+              className="add-ingredient-btn"
+            >+</button>
           </div>
 
           <div className="one-item">
