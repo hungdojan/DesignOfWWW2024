@@ -125,6 +125,24 @@ const EditRecipePage = () => {
         withCredentials: true,
       });
 
+      // delete old ingredients
+      const delete_resp = await axios.delete(`/api/recipes/${id}/ingredients/`);
+      if (delete_resp.status === 200) {
+        console.log("Image deleted successfully:", delete_resp.data.message);
+      }
+
+      const ingredientsData = {
+        ingredients: ingredients.map((ingredient) => ({
+          name: ingredient.name,
+          amount: ingredient.amount,
+        })),
+      };
+
+
+      // upload new ingredients
+      await axios.post(`/api/recipes/${id}/ingredients`, ingredientsData);
+      console.log('Ingredients added successfully:', response.data);
+
       if (image) {
         // delete old image
         if (imgSrc) {

@@ -70,7 +70,8 @@
 
 .recipe-box .ingredients-list li {
     color: var(--my-dark-brown);
-    font-style: italic; 
+    font-style: italic;
+    word-break: break-word;
 }
 
 .recipe-box .description-box {
@@ -80,6 +81,7 @@
     border-radius: 30px;
     padding: 8px 16px;
     margin: 6px 0;
+    word-break: break-word;
 }
 
 .recipe-box .instruction-list {
@@ -89,6 +91,7 @@
     padding: 8px;
     padding-left: 36px;
     margin: 6px 0;
+    word-break: break-word;
 }
 
 .recipe-box .instruction-list li {

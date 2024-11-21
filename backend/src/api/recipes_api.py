@@ -230,6 +230,25 @@ class RecipeIngredientsAPI(Resource):
         ids = RecipeManager.insert_multiple_ingredients(recipe, data["ingredients"])
         return {"ingredient_ids": ids}
 
+    @recipes_api_ns.doc(description="Remove all ingredients from recipe.")
+    @recipes_api_ns.response(
+        **message_response_dict(
+            "Success",
+            "All recipes deleted.",
+            HTTPStatus.OK,
+        )
+    )
+    @recipes_api_ns.response(
+        **message_response_dict("Recipe not found", "Recipe not found.")
+    )
+    def delete(self, _id: str):
+        recipe = RecipeManager.query_by_id(_id)
+        if not recipe:
+            return error_message("Recipe not found")
+
+        ingredients = recipe.ingredients
+        RecipeManager.delete_many([i.ID for i in ingredients])
+
 
 @recipes_api_ns.route("/<_id>/image")
 @recipes_api_ns.doc(data={"_id": "Recipe's ID."})
@@ -290,6 +309,42 @@ class RecipeImageAPI(Resource):
     data={"_id": "Recipe's ID.", "image_id": "Image's ID."},
 )
 class RecipeDeleteImageAPI(Resource):
+
+    @recipes_api_ns.doc(description="Update image in a recipe.", parser=upload_parser)
+    @recipes_api_ns.response(
+        **message_response_dict("Object not found.", "Recipe not found.")
+    )
+    @recipes_api_ns.response(
+        **message_response_dict(
+            "File extension not supported.",
+            "File extension not supported.",
+            HTTPStatus.UNSUPPORTED_MEDIA_TYPE,
+        )
+    )
+    @recipes_api_ns.response(
+        **message_response_dict(
+            "Image updated.", "Image image_id updated.", HTTPStatus.OK
+        )
+    )
+    def patch(self, _id: str, image_id: str):
+        args = upload_parser.parse_args()
+        upload_file: FileStorage = args["file"]
+
+        recipe = RecipeManager.query_by_id(_id)
+        if not recipe:
+            return error_message("Recipe not found.")
+
+        image = ImageManager.query_by_id(image_id)
+        if not image:
+            return error_message("Image not found.")
+
+        if not allowed_files(str(upload_file.filename)):
+            return error_message(
+                "File extension not supported", HTTPStatus.UNSUPPORTED_MEDIA_TYPE
+            )
+
+        ImageManager.update_image(upload_file, image)
+        return response_ok(f"Image {image.ID} updated")
 
     @recipes_api_ns.response(
         **message_response_dict(

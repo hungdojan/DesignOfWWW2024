@@ -48,3 +48,18 @@ class ImageManager(BaseManager[Images]):
 
         cls.delete_many(lof_ids)
         return lof_ids
+
+    @classmethod
+    def update_image(cls, image_file_storage: FileStorage, image: Images):
+        if not image_file_storage.filename:
+            raise ValueError("File name not found.")
+        filename: str = image_file_storage.filename
+        ext = filename.rsplit(".", 1)[1].lower()
+        _id = uuid4()
+        filename = f"{_id}_{image.recipeID}.{ext}"
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        image_file_storage.save(filepath)
+
+        p = pathlib.Path(image.target)
+        p.unlink(missing_ok=True)
+        image.target = filepath
