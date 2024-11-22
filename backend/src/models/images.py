@@ -55,11 +55,10 @@ class ImageManager(BaseManager[Images]):
             raise ValueError("File name not found.")
         filename: str = image_file_storage.filename
         ext = filename.rsplit(".", 1)[1].lower()
-        _id = uuid4()
+        _id=image.ID
         filename = f"{_id}_{image.recipeID}.{ext}"
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         image_file_storage.save(filepath)
 
-        p = pathlib.Path(image.target)
-        p.unlink(missing_ok=True)
         image.target = filepath
+        cls._update_db()

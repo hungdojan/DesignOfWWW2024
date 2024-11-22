@@ -126,9 +126,9 @@ const EditRecipePage = () => {
       });
 
       // delete old ingredients
-      const delete_resp = await axios.delete(`/api/recipes/${id}/ingredients/`);
+      const delete_resp = await axios.delete(`/api/recipes/${id}/ingredients`);
       if (delete_resp.status === 200) {
-        console.log("Image deleted successfully:", delete_resp.data.message);
+        console.log("Ingredients deleted successfully:", delete_resp.data.message);
       }
 
       const ingredientsData = {
@@ -138,30 +138,18 @@ const EditRecipePage = () => {
         })),
       };
 
-
       // upload new ingredients
       await axios.post(`/api/recipes/${id}/ingredients`, ingredientsData);
       console.log('Ingredients added successfully:', response.data);
 
       if (image) {
-        // delete old image
-        if (imgSrc) {
-          const delete_resp = await axios.delete(`/api/recipes/${id}/image/${imgID}`);
-          if (delete_resp.status === 200) {
-            console.log("Image deleted successfully:", delete_resp.data.message);
-          }
-        }
-
-        // upload new image
         const formData = new FormData();
         formData.append('file', image);
-        await axios.post(`/api/recipes/${id}/image/`, formData, {
+        await axios.patch(`/api/recipes/${id}/image/${imgID}/`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
           withCredentials: true,
         });
         console.log('Image uploaded successfully!');
-      } else {
-        console.log('No image to upload.');
       }
 
       // reset form

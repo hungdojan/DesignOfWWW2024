@@ -27,6 +27,7 @@ const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [userID, setUserID] = useState('');
+  const [imgID, setImgID] = useState('');
   const [myRecipe, setMyRecipe] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
   const [recipe, setRecipe] = useState(null);
@@ -54,6 +55,7 @@ const RecipePage = () => {
           const imageId = response.data.images_ids[0];
           const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
           const imageUrl = URL.createObjectURL(imageResponse.data);
+          setImgID(imageId);
           setImgSrc(imageUrl);
         }
       } catch (error) {
@@ -94,7 +96,7 @@ const RecipePage = () => {
   const handleDelete = async () => {
     try {
       if (imgSrc) {
-        await axios.delete(`/api/recipes/${userID}/image/${recipe.ID}/`);
+        await axios.delete(`/api/recipes/${id}/image/${imgID}/`);
       }
       await axios.delete(`/api/recipes/${id}`);
       navigate("/recipe/my_list");

@@ -3,6 +3,7 @@ from flask_restx import Namespace, Resource, fields, inputs, marshal
 from flask_restx.api import HTTPStatus
 from models.images import ImageManager
 from models.recipes import RecipeDifficulty, RecipeManager
+from models.ingredients import IngredientManager
 from models.users import UserManager
 from utils import allowed_files, error_message, message_response_dict, response_ok
 from werkzeug.datastructures import FileStorage
@@ -247,7 +248,8 @@ class RecipeIngredientsAPI(Resource):
             return error_message("Recipe not found")
 
         ingredients = recipe.ingredients
-        RecipeManager.delete_many([i.ID for i in ingredients])
+        IngredientManager.delete_many([i.ID for i in ingredients])
+        return response_ok("Ingredients deleted.")
 
 
 @recipes_api_ns.route("/<_id>/image")
