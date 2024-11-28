@@ -42,7 +42,7 @@ const LandingPage = () => {
       .get("/api/recipes/")
       .then((resp) => {
         setRecipes(resp.data);
-        setPopularRecipes(resp.data.slice(0, 3));
+        setPopularRecipes(resp.data.slice(0, 12));
       })
       .catch((err) => alert("Error fetching recipes: " + err));
   };

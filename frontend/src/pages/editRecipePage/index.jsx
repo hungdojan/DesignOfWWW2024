@@ -145,10 +145,18 @@ const EditRecipePage = () => {
       if (image) {
         const formData = new FormData();
         formData.append('file', image);
-        await axios.patch(`/api/recipes/${id}/image/${imgID}/`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
-        });
+        if (imgID !== '') {
+          await axios.patch(`/api/recipes/${id}/image/${imgID}/`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true,
+          });
+        } else {
+          await axios.post(`/api/recipes/${id}/image`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true,
+          });
+
+        }
         console.log('Image uploaded successfully!');
       }
 

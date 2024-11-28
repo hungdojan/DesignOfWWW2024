@@ -5,11 +5,16 @@ const AddUserModal = ({ open, onClose, onAdd, error }) => {
   const [email, setEmail] = useState("");
 
   const handleAdd = () => {
-    onAdd(email);
+    onAdd(email, () => setEmail(""));
   };
 
+  const handleClose = () => {
+    setEmail("");
+    onClose();
+  }
+
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={handleClose}>
       <Box
         sx={{
           position: "absolute",
@@ -39,7 +44,7 @@ const AddUserModal = ({ open, onClose, onAdd, error }) => {
           </Typography>
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          <Button onClick={onClose} variant="outlined">
+          <Button onClick={handleClose} variant="outlined">
             Cancel
           </Button>
           <Button

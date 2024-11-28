@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { useAuth } from '../../components/authContext'; 
+import { useAuth } from "../../components/authContext";
 import {
   Typography,
   Container,
@@ -26,8 +26,8 @@ import "./recipePage.css";
 const RecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [userID, setUserID] = useState('');
-  const [imgID, setImgID] = useState('');
+  const [userID, setUserID] = useState("");
+  const [imgID, setImgID] = useState("");
   const [myRecipe, setMyRecipe] = useState(false);
   const [imgSrc, setImgSrc] = useState(null);
   const [recipe, setRecipe] = useState(null);
@@ -38,7 +38,7 @@ const RecipePage = () => {
   const fetchUserId = async () => {
     try {
       const response = await axios.get("/api/auth/id");
-      if(response) {
+      if (response) {
         fetchUserRecipes(response.data.id);
       }
       setUserID(response.data.id);
@@ -53,7 +53,9 @@ const RecipePage = () => {
         const response = await axios.get(`/api/recipes/${id}/image/`);
         if (response.data?.images_ids?.length > 0) {
           const imageId = response.data.images_ids[0];
-          const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
+          const imageResponse = await axios.get(`/api/images/${imageId}`, {
+            responseType: "blob",
+          });
           const imageUrl = URL.createObjectURL(imageResponse.data);
           setImgID(imageId);
           setImgSrc(imageUrl);
@@ -82,8 +84,7 @@ const RecipePage = () => {
   const fetchUserRecipes = async (_userID) => {
     try {
       const resp = await axios.get(`/api/users/${_userID}/recipes`);
-      console.log(resp.data);
-      if (resp.data.some(recipe => id === recipe.ID)) {
+      if (resp.data.some((recipe) => id === recipe.ID)) {
         setMyRecipe(true);
       } else {
         setMyRecipe(false);
@@ -107,10 +108,29 @@ const RecipePage = () => {
     }
   };
 
+  const generateAuthorLabel = () => {
+    console.log(recipe.source);
+    if (recipe.source.isExternal) {
+      return (
+        <Typography>
+          Source:{" "}
+          <Link to={recipe.source.externalPage}>
+            {recipe.source.externalPage}
+          </Link>
+        </Typography>
+      );
+    }
+    return (
+      <Typography>
+        Author: <span className="highlight">{recipe.source.name}</span>
+      </Typography>
+    );
+  };
+
   useEffect(() => {
     document.title = "Recipe";
     fetchRecipe();
-    if(isAuthenticated) {
+    if (isAuthenticated) {
       fetchUserId();
     }
   }, [isAuthenticated]);
@@ -124,23 +144,31 @@ const RecipePage = () => {
       <Header />
       <Container maxWidth="md" className="recipe-box">
         <Card sx={{ boxShadow: 3, marginTop: 1 }}>
-          <Typography variant="h4" component="div" className="my-recipes-title" textAlign="center">
+          <Typography
+            variant="h4"
+            component="div"
+            className="my-recipes-title"
+            textAlign="center"
+          >
             {recipe.name}
           </Typography>
 
           <Box className="recipe-image">
-            <CardMedia
-              component="img"
-              image={imgSrc}
-              alt={recipe.name}
-            />
+            <CardMedia component="img" image={imgSrc} alt={recipe.name} />
           </Box>
 
           <CardContent>
             <div className="recipe-info">
-              <Typography>Difficulty: <span className="highlight">{recipe.difficulty}</span></Typography>
-              <Typography>Expected Time: <span className="highlight">{recipe.expectedTime} minutes</span></Typography>
+              <Typography>
+                Difficulty:{" "}
+                <span className="highlight">{recipe.difficulty}</span>
+              </Typography>
+              <Typography>
+                Expected Time:{" "}
+                <span className="highlight">{recipe.expectedTime} minutes</span>
+              </Typography>
             </div>
+            <div className="recipe-info">{generateAuthorLabel()}</div>
 
             {/* Ingredients Section */}
             <Typography variant="h5" component="div" className="subtitle">
@@ -151,9 +179,7 @@ const RecipePage = () => {
                 <Box component="li" key={index}>
                   <Typography variant="body1">
                     {ingredient.name}
-                    <span className="amount">
-                      ({ingredient.amount})
-                    </span>
+                    <span className="amount">({ingredient.amount})</span>
                   </Typography>
                 </Box>
               ))}
@@ -163,24 +189,22 @@ const RecipePage = () => {
             <Typography variant="h5" component="div" className="subtitle">
               Description
             </Typography>
-            <Box class="description-box">
-              {recipe.description}
-            </Box>
+            <Box class="description-box">{recipe.description}</Box>
 
             {/* Instructions Section */}
             <Typography variant="h5" component="div" className="subtitle">
               Instructions
             </Typography>
             <Stack component="ol" spacing={1} className="instruction-list">
-            {recipe.instructions
-              .split("\n")
-              .map(instruction => instruction.trim())
-              .filter(instruction => instruction)
-              .map((instruction, index) => (
-                <Box component="li" key={index}>
-                  <Typography variant="body1">{instruction}</Typography>
-                </Box>
-              ))}
+              {recipe.instructions
+                .split("\n")
+                .map((instruction) => instruction.trim())
+                .filter((instruction) => instruction)
+                .map((instruction, index) => (
+                  <Box component="li" key={index}>
+                    <Typography variant="body1">{instruction}</Typography>
+                  </Box>
+                ))}
             </Stack>
 
             {myRecipe && (
@@ -228,7 +252,8 @@ const RecipePage = () => {
         </DialogTitle>
         <DialogContent className="dialog-content">
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete this recipe? <br /> This action cannot be undone!
+            Are you sure you want to delete this recipe? <br /> This action
+            cannot be undone!
           </DialogContentText>
         </DialogContent>
         <DialogActions className="dialog-actions">
@@ -238,11 +263,7 @@ const RecipePage = () => {
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleDelete}
-            className="delete-button"
-            autoFocus
-          >
+          <Button onClick={handleDelete} className="delete-button" autoFocus>
             Delete
           </Button>
         </DialogActions>

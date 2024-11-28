@@ -39,7 +39,7 @@ const ShoppingListPage = () => {
   useEffect(() => {
     fetchShoppingLists();
   }, []);
-  
+
   const fetchShoppingLists = async () => {
     try {
       const resp = await axios.get("/api/users/shop_lists");
@@ -114,7 +114,7 @@ const ShoppingListPage = () => {
   const addItem = async (listId, itemName) => {
     if (itemName.trim() === "") return; // prevent adding empty items
 
-    const itemData = 	
+    const itemData =
     {
       total: 1,
       name: itemName,
@@ -136,12 +136,12 @@ const ShoppingListPage = () => {
     try {
       const response = await axios.get(`/api/shop_items/${itemId}`);
       const item = response.data;
-    
+
       const updatedItem = {
         ...item,
         total: Math.max(1, item.total + delta),
       };
-    
+
       await axios.patch(`/api/shop_items/${itemId}`, updatedItem);
     } catch (error) {
       console.error(`Error handling item ${itemId}:`, error);
@@ -162,13 +162,13 @@ const ShoppingListPage = () => {
   };
 
   const deleteShoppingList = async (listId) => {
-      
+
     await axios
       .delete(`/api/shopping_lists/${listId}`)
       .catch((error) => {
         console.error(`Error deleting list ${listId}:`, error);
       });
-  
+
       fetchShoppingLists();
     }
 
@@ -181,7 +181,7 @@ const ShoppingListPage = () => {
   }
   const handleCloseModal = () => setModalOpen(false);
 
-  const handleAddUser = async (email) => {
+  const handleAddUser = async (email, clearEmail) => {
     // console.log(`Attempting to add ${email}`);
 
     try {
@@ -192,11 +192,12 @@ const ShoppingListPage = () => {
 
       const listResponse = await axios.get(`/api/shopping_lists/${currentListId}`);
       const groupId = listResponse.data.groupID;
-  
+
       await axios.post(`/api/groups/${groupId}/users`, { user_ids: [userId].join(",") });
-  
+
       setModalError("");
       setModalOpen(false);
+      clearEmail();
     } catch (err) {
       setModalError(err.response?.data?.message || "This email is not valid");
     }
@@ -237,9 +238,9 @@ const ShoppingListPage = () => {
               open={isModalOpen}
               onClose={handleCloseModal}
               onAdd={handleAddUser}
-              error={modalError} 
+              error={modalError}
             />
-            
+
             <IconButton
               edge="end"
               onClick={() => deleteShoppingList(list.id)}

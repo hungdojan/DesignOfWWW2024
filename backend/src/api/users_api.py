@@ -211,7 +211,7 @@ class UserShoppingListAPI(Resource):
     @users_api_ns.response(
         **message_response_dict("User not found.", "User not found.")
     )
-    
+
     @login_required
     def get(self):
         user = UserManager.query_by_id(current_user.id)
@@ -220,7 +220,7 @@ class UserShoppingListAPI(Resource):
 
         shopping_lists = UserManager.retrieve_shopping_lists(user)
         return marshal(shopping_lists, shl_api.shop_list_mdl["short_view"])
-    
+
     @users_api_ns.doc("Create a shopping list.")
     @users_api_ns.expect(shl_api.shop_list_mdl["new"])
     @users_api_ns.response(
@@ -264,7 +264,7 @@ class UserByEmailAPI(Resource):
     def get(self, _email: str):
         user = UserManager.query_by_email(_email)
         if not user:
-            return error_message("User not found."), HTTPStatus.NOT_FOUND
+            return error_message("User not found.")
 
         return {"user_id": user.ID}, HTTPStatus.OK
 
