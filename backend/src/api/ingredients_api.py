@@ -29,16 +29,6 @@ ingred_mdl = {
 }
 
 
-@ingredients_api_ns.route("/")
-@ingredients_api_ns.deprecated
-class IngredientsAPI(Resource):
-
-    @ingredients_api_ns.marshal_list_with(ingred_mdl["view"])
-    @ingredients_api_ns.deprecated
-    def get(self):
-        return [i.as_dict() for i in IngredientManager.query_all()], HTTPStatus.OK
-
-
 @ingredients_api_ns.route("/name")
 class IngredientNamesAPI(Resource):
 

@@ -27,11 +27,6 @@ group_mdl = {
 @groups_api_ns.route("/")
 class GroupsAPI(Resource):
 
-    @groups_api_ns.deprecated
-    @groups_api_ns.marshal_list_with(group_mdl["view"])
-    def get(self):
-        return [g.as_dict() for g in GroupManager.query_all()]
-
     @groups_api_ns.doc(description="Create a new group.")
     @groups_api_ns.expect(group_mdl["new"])
     @groups_api_ns.response(

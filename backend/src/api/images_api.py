@@ -16,14 +16,6 @@ image_mdl = {
     ),
 }
 
-@images_api_ns.route("/")
-@images_api_ns.deprecated
-class ImagesAPI(Resource):
-
-    @images_api_ns.marshal_list_with(image_mdl["view"])
-    def get(self):
-        return [i.as_dict() for i in ImageManager.query_all()]
-
 @images_api_ns.route("/<_id>")
 @images_api_ns.doc(description="Download data.", data={"_id": "Image's ID."})
 class ImageAPI(Resource):

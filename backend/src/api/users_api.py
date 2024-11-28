@@ -43,35 +43,6 @@ user_mdl = {
 }
 
 
-@users_api_ns.route("/")
-@users_api_ns.deprecated
-class UsersAPI(Resource):
-
-    @users_api_ns.marshal_list_with(user_mdl["view"])
-    def get(self):
-        return [g.as_dict() for g in UserManager.query_all()], HTTPStatus.OK
-
-    @users_api_ns.doc(description="Create a new user.")
-    @users_api_ns.expect(user_mdl["new"])
-    @users_api_ns.response(
-        HTTPStatus.CREATED, "Created", user_mdl["view"]
-    )
-    @users_api_ns.response(
-        **message_response_dict("Error while processing.", "Missing parameter.")
-    )
-    def post(self):
-        data = users_api_ns.payload
-
-        try:
-            user = UserManager.insert_one(
-                **data, role=UserRole.User, groups=[], favorites=[]
-            )
-        except TypeError:
-            return error_message("Missing name parameter")
-
-        return user.as_dict(), HTTPStatus.CREATED
-
-
 @users_api_ns.route("/<_id>")
 @users_api_ns.doc(data={"_id": "User's ID."})
 class UserAPI(Resource):

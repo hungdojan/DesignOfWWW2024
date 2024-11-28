@@ -39,15 +39,6 @@ shop_list_mdl = {
 }
 
 
-@shopping_lists_api_ns.route("/")
-@shopping_lists_api_ns.deprecated
-class ShoppingListsAPI(Resource):
-
-    @shopping_lists_api_ns.marshal_list_with(shop_list_mdl["full_view"])
-    def get(self):
-        return [g.serialize() for g in ShoppingListManager.query_all()]
-
-
 @shopping_lists_api_ns.route("/<_id>")
 @shopping_lists_api_ns.doc(data={"_id": "ShoppingList's ID."})
 class ShoppingListAPI(Resource):

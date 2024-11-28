@@ -1,4 +1,4 @@
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource
 from flask_restx.api import HTTPStatus
 import api.users_api as usr
 from utils import error_message, message_response_dict, response_ok
@@ -48,9 +48,9 @@ class AuthLogin(Resource):
         except TypeError:
             return error_message("Missing name parameter")
 
-    
+
         login_user(user)
-    
+
         return user.as_dict(), HTTPStatus.CREATED
 
 @auth_ns_api.route("/logout")
@@ -67,7 +67,7 @@ class AuthStatus(Resource):
 
     def get(self):
         return {"authenticated": current_user.is_authenticated}
-    
+
 @auth_ns_api.route("/id")
 class AuthStatus(Resource):
 
