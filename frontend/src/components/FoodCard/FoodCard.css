@@ -1,8 +1,8 @@
-/* Recommended card styles */
 .food-card {
     background-color: var(--my-light-green);
     margin: 16px;
     width: 230px;
+    cursor: pointer;
 }
 
 .card-content {
@@ -17,11 +17,13 @@
 .card-content .recipe-title {
     color: white;
     flex-grow: 1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
     text-decoration: none;
     text-align: left;
+    white-space: normal;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    display: inline-block;
+    max-width: 100%; 
 }
 
 .card-content button {
@@ -33,12 +35,20 @@
     margin-left: 12px;
 }
 
+.card-content .fav-recipe-button.favorite {
+    background-color: var(--my-light-blue);
+    color: yellow;
+}
+
+.card-content .fav-recipe-button.favorite:hover {
+    background-color: var(--my-light-blue-shadow);
+}
+
 .card-content .edit-recipe-button:hover {
     background-color: var(--my-light-blue);
     color: whitesmoke;
 }
 
 .card-content .fav-recipe-button:hover {
-    background-color: var(--my-light-blue);
-    color: yellow;
+    background-color: #ddd;
 }

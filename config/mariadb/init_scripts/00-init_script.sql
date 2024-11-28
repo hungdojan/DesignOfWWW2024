@@ -52,8 +52,7 @@ CREATE TABLE IF NOT EXISTS Ingredients  (
     ID VARCHAR(255) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     recipeID VARCHAR(255) NOT NULL,
-    value FLOAT NOT NULL,
-    unit ENUM('mg', 'g', 'kg', 'ml', 'l', 'ks') NOT NULL,
+    amount VARCHAR(255) NOT NULL,
 
     FOREIGN KEY (recipeID) REFERENCES Recipes(ID) ON DELETE CASCADE
 );
@@ -130,15 +129,15 @@ INSERT INTO Recipes (ID, name, externalPage, authorID, expectedTime, difficulty,
     9. Let cool on baking sheets for a few minutes before transferring to a wire rack to cool completely.
 ');
 
-INSERT INTO Ingredients (ID, name, recipeID, value, unit) VALUES
-(uuid_v4(), 'spaghetti', (SELECT ID FROM Recipes LIMIT 1), 100, 'g'),
-(uuid_v4(), 'ground beef', (SELECT ID FROM Recipes LIMIT 1), 250, 'g'),
-(uuid_v4(), 'tomato sauce', (SELECT ID FROM Recipes LIMIT 1), 150, 'g'),
-(uuid_v4(), 'butter', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), 300, 'g'),
-(uuid_v4(), 'vanilla extract', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), 10, 'ml'),
-(uuid_v4(), 'sugar', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), 100, 'g'),
-(uuid_v4(), 'flour', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), 400, 'g'),
-(uuid_v4(), 'chocolate chips', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), 100, 'g');
+INSERT INTO Ingredients (ID, name, recipeID, amount) VALUES
+(uuid_v4(), 'spaghetti', (SELECT ID FROM Recipes LIMIT 1), '100 g'),
+(uuid_v4(), 'ground beef', (SELECT ID FROM Recipes LIMIT 1), '250 g'),
+(uuid_v4(), 'tomato sauce', (SELECT ID FROM Recipes LIMIT 1), '150 g'),
+(uuid_v4(), 'butter', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), '300 g'),
+(uuid_v4(), 'vanilla extract', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), '10 ml'),
+(uuid_v4(), 'sugar', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), '100 g'),
+(uuid_v4(), 'flour', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), '400 g'),
+(uuid_v4(), 'chocolate chips', (SELECT ID FROM Recipes LIMIT 1 OFFSET 1), '100 g');
 
 
 INSERT INTO Groups (ID, name) VALUES

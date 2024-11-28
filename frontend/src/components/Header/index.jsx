@@ -16,12 +16,23 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import "./Header.css";
+import { useAuth } from '../authContext'; 
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [userName, setUserName] = useState(null);
-  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 600px)");
+  
+  const navigate = useNavigate();
+  const { isAuthenticated, loginUser, logoutUser } = useAuth();
+
+  const handleNavigation = (route) => {
+
+    if (isAuthenticated) {
+      navigate(route);
+    } else {
+      alert('You must be logged in to access this page!');
+    }
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -30,14 +41,16 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  // TODO: handle any logout, user auth, storing user info, etc.
+    
   const handleLoginSuccess = (credentialResponse) => {
     var decoded = jwtDecode(credentialResponse.credential);
-    // console.log(decoded);
-    var name = decoded.given_name;
-    setUserName(name);
+    loginUser(decoded.email, decoded.name, decoded.email);
   };
+
+  const handleLogout = () => {
+    logoutUser()
+    handleNavigation("/")
+  }
 
   return (
     <AppBar position="sticky" className="header">
@@ -67,24 +80,24 @@ const Header = () => {
               className="nav-menu"
               onClose={handleClose}
             >
-              <MenuItem onClick={() => navigate("/recipe/new")}>
+              <MenuItem onClick={() => handleNavigation("/recipe/new")}>
                 Add Recipe
               </MenuItem>
-              <MenuItem onClick={() => navigate("/recipe/my_list")}>
+              <MenuItem onClick={() => handleNavigation("/recipe/my_list")}>
                 My Recipes
               </MenuItem>
-              <MenuItem onClick={() => navigate("/recipe/favorite")}>
+              <MenuItem onClick={() => handleNavigation("/recipe/favorite")}>
                 Favorite Recipes
               </MenuItem>
             </Menu>
             <Button
               variant="text"
               className="nav-button"
-              onClick={() => navigate("/shop_list")}
+              onClick={() => handleNavigation("/shop_list")}
             >
               Shopping List
             </Button>
-            {!userName ? (
+            {!isAuthenticated ? (
               <GoogleLogin
                 onSuccess={handleLoginSuccess}
                 onError={() => {
@@ -92,8 +105,8 @@ const Header = () => {
                 }}
               />
             ) : (
-              <Button variant="text" className="nav-button">
-                Logout {userName}
+              <Button variant="text" onClick={() => handleLogout()} className="nav-button">
+                Logout
               </Button>
             )}
         </>
@@ -119,20 +132,20 @@ const Header = () => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => navigate("/recipe/new")}>
+            <MenuItem onClick={() => handleNavigation("/recipe/new")}>
               Add Recipe
             </MenuItem>
-            <MenuItem onClick={() => navigate("/recipe/my_list")}>
+            <MenuItem onClick={() => handleNavigation("/recipe/my_list")}>
               My Recipes
             </MenuItem>
-            <MenuItem onClick={() => navigate("/recipe/favorite")}>
+            <MenuItem onClick={() => handleNavigation("/recipe/favorite")}>
               Favorite Recipes
             </MenuItem>
-            <MenuItem onClick={() => navigate("/shop_list")}>
+            <MenuItem onClick={() => handleNavigation("/shop_list")}>
               Shopping List
             </MenuItem>
 
-            {!userName ? (
+            {!isAuthenticated ? (
               <MenuItem>
                 <GoogleLogin
                   onSuccess={handleLoginSuccess}
@@ -143,8 +156,8 @@ const Header = () => {
               </MenuItem>
             ) : (
               <MenuItem>
-                <Button variant="text" className="nav-button" onClick={() => setUserName(null)}>
-                  Log Out {userName}
+                <Button variant="text" onClick={() => handleLogout()} className="nav-button">
+                  Logout
                 </Button>
               </MenuItem>
             )}

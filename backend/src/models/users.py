@@ -3,6 +3,8 @@ from __future__ import annotations
 import enum
 from typing import Optional
 
+from flask_login import UserMixin
+
 import models.groups as grp
 import models.recipes as rcp
 import models.shopping_list as shl
@@ -21,7 +23,7 @@ class UserRole(str, enum.Enum):
         return str(self.value)
 
 
-class Users(Base):
+class Users(Base, UserMixin):
     __tablename__ = "Users"
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), nullable=False)
@@ -32,6 +34,10 @@ class Users(Base):
     groups: Mapped[list[grp.Groups]] = relationship("Groups", secondary=UsersGroupsTBL)
     favorites: Mapped[list[rcp.Recipes]] = relationship("Recipes", secondary=Favorite)
 
+    @property
+    def id(self):
+        return self.ID
+    
     @staticmethod
     def get_columns():
         return [c.name for c in __class__.__table__.columns]
@@ -72,3 +78,10 @@ class UserManager(BaseManager[Users]):
         res = DB.session.execute(_select).scalars().all()
         res = [sl for sl in res]
         return res
+    
+    @classmethod
+    def query_by_email(cls, email: str) -> Optional[Users]:
+
+        return DB.session.execute(
+            select(Users).where(Users.email == email)
+        ).scalar_one_or_none()

@@ -105,9 +105,21 @@ class RecipeManager(BaseManager[Recipes]):
         )
 
         ingred_obj = [
-            ing.Ingredients(str(uuid4()), i["name"], recipe.ID, i["value"], i["unit"])
+            ing.Ingredients(str(uuid4()), i["name"], recipe.ID, i["amount"])
             for i in ing_list
         ]
         ing.IngredientManager.insert_multiple_obj(ingred_obj)
 
         return recipe
+
+    @classmethod
+    def insert_multiple_ingredients(
+        cls, recipe: Recipes, ingreds: list[dict]
+    ) -> list[str]:
+        ings = [
+            ing.Ingredients(str(uuid4()), i["name"], recipe.ID, i["amount"])
+            for i in ingreds
+        ]
+
+        ing.IngredientManager.insert_multiple_obj(ings)
+        return [i.ID for i in ings]

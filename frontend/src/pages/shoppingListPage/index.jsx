@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import AddUserModal from "../../components/AddUserModal";
 import {
   Box,
   Typography,
@@ -16,18 +17,14 @@ import {
 } from "@mui/material";
 import { Add, Remove, Delete, Edit } from "@mui/icons-material";
 import "./shoppingListPage.css";
+import axios from "axios";
 
 const ShoppingListPage = () => {
   const [shoppingLists, setShoppingLists] = useState([
     {
       id: 1,
-      name: "Groceries",
-      items: [{ id: 1, name: "Apple", quantity: 2 }],
-    },
-    {
-      id: 2,
-      name: "Stationery",
-      items: [{ id: 1, name: "Notebook", quantity: 5 }],
+      name: "Sample",
+      items: [{ id: 1, name: "Item", quantity: 2 }],
     },
   ]);
   const [newItemName, setNewItemName] = useState("");
@@ -39,6 +36,60 @@ const ShoppingListPage = () => {
     document.title = "Shopping List";
   }, []);
 
+  useEffect(() => {
+    fetchShoppingLists();
+  }, []);
+
+  const fetchShoppingLists = async () => {
+    try {
+      const resp = await axios.get("/api/users/shop_lists");
+
+      const shoppingLists = resp.data.map((list) => ({
+        id: list.ID,
+        name: list.name,
+        items: [],
+      }));
+
+      // fetch all items for each shopping list
+      const updatedShoppingLists = await Promise.all(
+        shoppingLists.map(async (list) => {
+          try {
+            const itemsResponse = await axios.get(`/api/shopping_lists/${list.id}/items`);
+              return {
+              ...list,
+              items: itemsResponse.data.map((item) => ({
+                id: item.ID,
+                name: item.name,
+                quantity: item.total,
+              })),
+              };
+          } catch (error) {
+            console.error(`Error fetching items for list ${list.id}:`, error);
+            return list;
+          }
+        })
+      );
+
+      setShoppingLists(updatedShoppingLists);
+    } catch (error) {
+      console.error("Error fetching shopping lists:", error);
+    }
+  };
+
+  const addNewShoppingList = async () => {
+
+    const shoppingListData = { name: "New List"};
+
+    await axios
+      .post("/api/users/shop_lists", shoppingListData)
+      .then((response) => {
+        const shoppingListID = response.data.shopping_list_id;
+        console.log("Created new shopping list with id:", shoppingListID);
+      })
+
+    fetchShoppingLists();
+  };
+
   // Edit the main displayed list name
   const handleEditListTitle = () => {
     const listToEdit = shoppingLists.find((list) => list.id === currentListId);
@@ -46,53 +97,110 @@ const ShoppingListPage = () => {
     setIsEditingListTitle(true);
   };
 
-  const saveListTitle = () => {
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === currentListId ? { ...list, name: editedListTitle } : list
-    );
-    setShoppingLists(updatedLists);
+  const saveListTitle = async () => {
+
+    await axios
+      .patch(`/api/shopping_lists/${currentListId}`, {
+        name: editedListTitle,
+      })
+      .catch ((error) => {
+        console.error(`Error updating list ${currentListId} name:`, error);
+    });
+
+    fetchShoppingLists();
     setIsEditingListTitle(false);
   };
 
-  const addItem = (listId, itemName) => {
+  const addItem = async (listId, itemName) => {
     if (itemName.trim() === "") return; // prevent adding empty items
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === listId
-        ? {
-            ...list,
-            items: [
-              ...list.items,
-              { id: Date.now(), name: itemName, quantity: 1 },
-            ],
-          }
-        : list
-    );
-    setShoppingLists(updatedLists);
+
+    const itemData =
+    {
+      total: 1,
+      name: itemName,
+      completed: false
+    }
+
+    await axios
+    .post(`/api//shopping_lists/${listId}/items`, itemData)
+    .then((response) => {
+      const shoppingListID = response.data.shopping_list_id;
+      console.log("Created new shopping list with id:", shoppingListID);
+    })
+
+    fetchShoppingLists();
   };
 
-  const updateItemQuantity = (listId, itemId, delta) => {
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === listId
-        ? {
-            ...list,
-            items: list.items.map((item) =>
-              item.id === itemId
-                ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-                : item
-            ),
-          }
-        : list
-    );
-    setShoppingLists(updatedLists);
+  const updateItemQuantity = async (listId, itemId, delta) => {
+
+    try {
+      const response = await axios.get(`/api/shop_items/${itemId}`);
+      const item = response.data;
+
+      const updatedItem = {
+        ...item,
+        total: Math.max(1, item.total + delta),
+      };
+
+      await axios.patch(`/api/shop_items/${itemId}`, updatedItem);
+    } catch (error) {
+      console.error(`Error handling item ${itemId}:`, error);
+    }
+
+    fetchShoppingLists();
   };
 
-  const deleteItem = (listId, itemId) => {
-    const updatedLists = shoppingLists.map((list) =>
-      list.id === listId
-        ? { ...list, items: list.items.filter((item) => item.id !== itemId) }
-        : list
-    );
-    setShoppingLists(updatedLists);
+  const deleteItem = async (listId, itemId) => {
+
+    await axios
+      .delete(`/api/shopping_lists/${listId}/items/${itemId}`)
+      .catch((error) => {
+        console.error(`Error deleting item ${itemId} from list ${listId}:`, error);
+      });
+
+    fetchShoppingLists();
+  };
+
+  const deleteShoppingList = async (listId) => {
+
+    await axios
+      .delete(`/api/shopping_lists/${listId}`)
+      .catch((error) => {
+        console.error(`Error deleting list ${listId}:`, error);
+      });
+
+      fetchShoppingLists();
+    }
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalError, setModalError] = useState("");
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+    setModalError("");
+  }
+  const handleCloseModal = () => setModalOpen(false);
+
+  const handleAddUser = async (email, clearEmail) => {
+    // console.log(`Attempting to add ${email}`);
+
+    try {
+
+      const userResponse = await axios.get(`/api/users/email/${email}`);
+      const userId = userResponse.data.user_id;
+      // console.log(`User ID retrieved: ${userId}`);
+
+      const listResponse = await axios.get(`/api/shopping_lists/${currentListId}`);
+      const groupId = listResponse.data.groupID;
+
+      await axios.post(`/api/groups/${groupId}/users`, { user_ids: [userId].join(",") });
+
+      setModalError("");
+      setModalOpen(false);
+      clearEmail();
+    } catch (err) {
+      setModalError(err.response?.data?.message || "This email is not valid");
+    }
   };
 
   return (
@@ -117,6 +225,29 @@ const ShoppingListPage = () => {
               className={`list-item ${list.id === currentListId ? "selected" : ""}`}
             >
               <ListItemText primary={list.name} />
+
+            <IconButton
+              edge="end"
+              onClick={handleOpenModal}
+              className="action-button"
+            >
+              <Add />
+            </IconButton>
+
+            <AddUserModal
+              open={isModalOpen}
+              onClose={handleCloseModal}
+              onAdd={handleAddUser}
+              error={modalError}
+            />
+
+            <IconButton
+              edge="end"
+              onClick={() => deleteShoppingList(list.id)}
+              className="action-button"
+            >
+              <Delete />
+            </IconButton>
             </ListItem>
           ))}
         </List>
@@ -124,10 +255,7 @@ const ShoppingListPage = () => {
           variant="outlined"
           fullWidth
           onClick={() =>
-            setShoppingLists([
-              ...shoppingLists,
-              { id: Date.now(), name: "New List", items: [] },
-            ])
+            addNewShoppingList()
           }
           className="new-list-btn"
         >

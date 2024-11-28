@@ -1,3 +1,4 @@
+from flask_login import login_required
 import api.shopping_lists_api as shl_api
 from flask_restx import Namespace, Resource, fields
 from flask_restx.api import HTTPStatus
@@ -11,7 +12,7 @@ groups_api_ns = Namespace(
 
 group_user_id_parser = groups_api_ns.parser()
 group_user_id_parser.add_argument(
-    "user_ids", help="User IDs seperated by comma.", action="split", location="form"
+    "user_ids", help="User IDs seperated by comma.", action="split" , location="json"
 )
 
 
@@ -39,8 +40,8 @@ class GroupsAPI(Resource):
     @groups_api_ns.response(
         HTTPStatus.CREATED, "Successfully created", group_mdl["view"]
     )
+    @login_required
     def post(self):
-        # TODO: require auth
         data = groups_api_ns.payload
 
         try:
@@ -126,8 +127,8 @@ class GroupUsersAPI(Resource):
     @groups_api_ns.response(
         **message_response_dict("Group not found.", "Group not found.")
     )
+    @login_required
     def post(self, _id: str):
-        # TODO: require auth
         args = group_user_id_parser.parse_args()
 
         group = GroupManager.query_by_id(_id)
@@ -185,8 +186,8 @@ class GroupShoppingListAPI(Resource):
         fields.String(example="shopping_list_id"),
         envelope="shopping_list_id",
     )
+    @login_required
     def post(self, _id: str):
-        # TODO: require auth
         group = GroupManager.query_by_id(_id)
         if not group:
             return error_message("Group not found.")

@@ -7,3 +7,11 @@
     margin: 0;
     padding: 20px;
 }
+
+.box-grid .empty {
+    color: grey;
+    font-size: 24px;
+    text-align: center;
+    flex-grow: 1;
+    margin: 60px 0;
+}

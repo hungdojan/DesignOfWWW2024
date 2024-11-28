@@ -4,6 +4,7 @@ import LandingPage from "./pages/landingPage";
 import ShoppingListPage from "./pages/shoppingListPage";
 import RecipePage from "./pages/recipePage";
 import AddRecipePage from "./pages/addRecipePage";
+import EditRecipePage from "./pages/editRecipePage";
 import FavoriteRecipesPage from "./pages/favoriteRecipePage";
 import ListRecipePage from "./pages/listRecipePage";
 
@@ -20,6 +21,10 @@ const App = () => {
     {
       path: "/recipe/new",
       element: <AddRecipePage />,
+    },
+    {
+      path: "/recipe/edit/:id",
+      element: <EditRecipePage />,
     },
     {
       path: "/recipe/my_list",

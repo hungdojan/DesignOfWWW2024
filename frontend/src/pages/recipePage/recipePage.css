@@ -7,6 +7,9 @@
     color: var(--my-light-blue);
     padding: 8px;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .recipe-box .recipe-image {
@@ -17,6 +20,31 @@
     padding-bottom: 0;
     object-fit: cover;
     width: auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+.recipe-box .recipe-info {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    color: var(--my-dark-brown);
+    margin-bottom: 8px;
+}
+
+.recipe-box .recipe-info > * {
+    flex: 1;
+    min-width: 150px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.recipe-box .recipe-info .highlight {
+    color: var(--my-light-blue);
+    font-style: italic;
 }
 
 .recipe-box .subtitle {
@@ -35,9 +63,25 @@
     margin: 6px 0;
 }
 
+.recipe-box .ingredients-list .amount {
+    margin-left: 6px;
+    color: var(--my-light-blue-shadow);
+}
+
 .recipe-box .ingredients-list li {
     color: var(--my-dark-brown);
-    font-style: italic; 
+    font-style: italic;
+    word-break: break-word;
+}
+
+.recipe-box .description-box {
+    color: var(--my-dark-brown);
+    background-color: whitesmoke;
+    border: 2px solid rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    padding: 8px 16px;
+    margin: 6px 0;
+    word-break: break-word;
 }
 
 .recipe-box .instruction-list {
@@ -47,6 +91,7 @@
     padding: 8px;
     padding-left: 36px;
     margin: 6px 0;
+    word-break: break-word;
 }
 
 .recipe-box .instruction-list li {
@@ -74,3 +119,67 @@
     background-color: red;
     color: whitesmoke;
 }
+
+.dialog-window {
+    border-radius: 15px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+}
+
+.dialog-window .dialog-title {
+    color: var(--my-dark-brown);
+    font-size: 22px;
+    text-align: center;
+}
+
+.dialog-window .dialog-content {
+    text-align: center;
+    line-height: 1.5;
+    padding: 10px 20px;
+}
+
+.dialog-window .dialog-actions {
+    display: flex;
+    justify-content: right;
+}
+
+.dialog-window .dialog-actions button {
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 30px;
+    padding: 10px 20px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.dialog-actions .MuiButton-root:first-child {
+    background-color: whitesmoke;
+    color: var(--my-dark-brown);
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-actions .MuiButton-root:first-child:hover {
+    background-color: var(--my-light-blue);
+    color: white;
+}
+
+.dialog-actions .MuiButton-root:last-child {
+    background-color: red;
+    color: white;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-actions .MuiButton-root:last-child:hover {
+    background-color: darkred;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .recipe-box .recipe-info {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 6px;
+    }
+  }

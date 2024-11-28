@@ -28,7 +28,7 @@
 .add-form .one-item {
     display: flex;
     align-items: center;
-    gap: 10px;  
+    gap: 10px;
 }
 
 .add-form .image-container {
@@ -81,64 +81,6 @@
     width: 550px;
 }
 
-.add-form .one-item .ingredients-section {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-left: 22px;
-}
-
-.add-form .ingredient-item {
-    display: flex;
-    justify-content: space-between;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-}
-
-.add-form .input-ingredient {
-    flex: 1;
-    border-color: var(--my-light-green);
-    border-radius: 5px;
-    color: var(--my-dark-brown);
-    padding: 8px;
-    margin: 5px 0;
-}
-
-.add-form .ingredient-btn {
-    font-size: 20px;
-    background-color: var(--my-light-brown);
-    color: color;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.3s;
-    max-width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.add-form .add-ingredient-btn {
-    font-size: 20px;
-    background-color: var(--my-light-green);
-    color: white;
-    border: none;
-    cursor: pointer;
-    text-align: center;
-    transition: background-color 0.3s;
-}
-
-.add-form .ingredient-btn:hover {
-    background-color: var(--my-dark-brown);
-}
-
-.add-form .add-ingredient-btn:hover {
-    background-color: var(--my-light-blue);
-}
-
 .add-form .input-field-instruction {
     border-color: var(--my-light-green);
     border-radius: 5px;
@@ -175,19 +117,40 @@
     color: var(--my-dark-brown);
 }
 
-.add-button {
+.add-form button {
+    flex: 1;
     background-color: var(--my-light-green);
     border-radius: 10px;
     color: white;
     font-weight: bold;
     padding: 10px;
-    margin: 10px 0;
     text-transform: uppercase;
     transition: background-color 0.3s;
 }
 
-.add-button:hover {
+.add-form .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+}
+
+.add-form .button-group button {
+    flex: 1;
+    margin-top: 10px;
+}
+
+.save-button:hover {
     background-color: var(--my-light-blue);
+}
+
+.add-form .cancel-button {
+    background-color: whitesmoke;
+    color: var(--my-dark-brown);
+}
+
+.cancel-button:hover {
+    background-color: #ddd;
 }
 
 @media (max-width: 768px) {
@@ -215,32 +178,6 @@
         min-height: 50px;
         overflow: hidden;
         resize: none;
-    }
-
-    .add-form .one-item .ingredients-section {
-        margin: 0;
-    }
-
-    .add-form .ingredient-item {
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        border-bottom: 2px dashed var(--my-light-blue);
-        margin-bottom: 8px;
-    }
-
-    .add-form .input-ingredient {
-        margin: 0;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .add-form .ingredient-btn,
-    .add-form .add-ingredient-btn {
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        margin-bottom: 8px;
     }
 
     .add-form .input-field-instruction {
@@ -279,9 +216,16 @@
         white-space: nowrap;
       }
 
-    .add-button {
+    .add-form .button-group {
+        flex-direction: column;
+    }
+
+    .add-form .button-group button {
+        margin: 0;
         width: 100%;
-        padding: 12px;
-        font-size: 1rem;
+    }
+
+    .add-form .button-group .save-button {
+        margin-top: 10px;
     }
 }

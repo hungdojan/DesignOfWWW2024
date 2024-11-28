@@ -4,7 +4,10 @@ import mysql.connector
 from api import food_tips_api
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from models import DB
+
+from auth import login_manager
 
 load_dotenv()
 
@@ -28,6 +31,12 @@ def create_app() -> Flask:
         MAX_CONTENT_LENGTH=10_000_000,
         UPLOAD_FOLDER=os.getenv("UPLOAD_DIR", "/tmp"),
     )
+
+    login_manager.init_app(app)
+
+    CORS(app, resources={r"/*": {"origins": "*"}})
+    app.url_map.strict_slashes = False
+
 
     food_tips_api.init_app(app)
     DB.init_app(app)

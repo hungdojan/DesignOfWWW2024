@@ -1,52 +1,65 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import FoodCard from "../../components/FoodCard";
 import {
   Typography,
   TextField,
   Container,
-  Card,
-  CardContent,
-  CardMedia,
   Grid2,
   InputAdornment,
 } from "@mui/material";
 import { FaSearch } from "react-icons/fa";
 import "./landingPage.css";
 
-import salmonImage from "../../assets/recipe/salmon.jpg";
-import greekSaladImage from "../../assets/recipe/greek_salad.jpg";
-import hotChocolateImage from "../../assets/recipe/hot_chocolate.jpg";
-import FoodCard from "../../components/FoodCard";
-
 <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"></link>
 
-// hardcoded recipes for demo purposes
-const recipes = [
-  {
-    id: 1,
-    title: "Salmon Soup",
-    image: salmonImage,
-    alt: "Salmon Soup",
-  },
-  {
-    id: 2,
-    title: "Greek Salad",
-    image: greekSaladImage,
-    alt: "Greek Salad",
-  },
-  {
-    id: 3,
-    title: "Hot Chocolate",
-    image: hotChocolateImage,
-    alt: "Hot Chocolate",
-  },
-];
-
 const LandingPage = () => {
+  const [recipes, setRecipes] = useState([]);
+  const [popularRecipes, setPopularRecipes] = useState([]);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchPerformed, setSearchPerformed] = useState(false);
+
+  const handleInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const filterRecipes = (query) => {
+    if (!query.trim()) {
+      setFilteredRecipes(recipes);
+    } else {
+      const filtered = recipes.filter((recipe) =>
+        recipe.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredRecipes(filtered);
+    }
+  };
+
+  const fetchPopularRecipes = () => {
+    axios
+      .get("/api/recipes/")
+      .then((resp) => {
+        setRecipes(resp.data);
+        setPopularRecipes(resp.data.slice(0, 12));
+      })
+      .catch((err) => alert("Error fetching recipes: " + err));
+  };
+
   useEffect(() => {
     document.title = "Home Page";
+    fetchPopularRecipes();
   }, []);
+
+  useEffect(() => {
+    filterRecipes(searchQuery);
+  }, [searchQuery]);
+
+  const handleSearch = () => {
+    setSearchPerformed(true);
+  };
+
   return (
     <div>
       <Header />
@@ -56,6 +69,13 @@ const LandingPage = () => {
             variant="outlined"
             placeholder="Search Recipes..."
             fullWidth
+            value={searchQuery}
+            onChange={handleInputChange}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
             className="search-input"
             InputProps={{
               startAdornment: (
@@ -65,35 +85,60 @@ const LandingPage = () => {
               ),
               style: {
                 borderRadius: "30px",
-                padding: "0 20px",
                 border: "3px solid var(--my-light-green)",
               },
             }}
           />
         </div>
-        <div class="slogan">
-          Eat <span class="highlight">Well</span>,<br/>
-          Even on a <br/>
-          <span class="highlight">Student's Schedule!</span>
-        </div>
+        {!searchPerformed && (
+          <div className="slogan">
+            Eat <span className="highlight">Well</span>,<br />
+            Even on a <br />
+            <span className="highlight">Student's Schedule!</span>
+          </div>
+        )}
       </div>
 
-      {/* Main Content */}
-      <Container maxWidth="md">
-        <Grid2 container spacing={2} className="box-grid">
-          {recipes.map((recipe) => (
-            <Grid2 item key={recipe.id} className="recipe-item">
-              <FoodCard
-                img_src={recipe.image}
-                alt={recipe.alt}
-                title={recipe.title}
-                editable={false}
-                id={recipe.id}
-              />
-            </Grid2>
-          ))}
-        </Grid2>
-      </Container>
+      {!searchPerformed && (
+        <Container maxWidth="md">
+          <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
+            {popularRecipes.map((recipe) => (
+              <Grid2 item key={recipe.ID} className="recipe-item">
+                <FoodCard
+                  alt={`Recipe ${recipe.name}`}
+                  title={recipe.name}
+                  editable={false}
+                  id={recipe.ID}
+                />
+              </Grid2>
+            ))}
+          </Grid2>
+        </Container>
+      )}
+
+      {searchPerformed && (
+        <Container maxWidth="md">
+          <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
+            {filteredRecipes.length === 0 ? (
+              <Container maxWidth="md" className="container">
+                  <Typography className="empty">No recipe found.</Typography>
+              </Container>
+            ) : (
+              filteredRecipes.map((recipe) => (
+                <Grid2 item key={recipe.ID} className="recipe-item">
+                  <FoodCard
+                    img_src={recipe.imageUrl}
+                    alt={`Recipe ${recipe.name}`}
+                    title={recipe.name}
+                    editable={false}
+                    id={recipe.ID}
+                  />
+                </Grid2>
+              ))
+            )}
+          </Grid2>
+        </Container>
+      )}
       <Footer />
     </div>
   );

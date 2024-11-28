@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import axios from 'axios';
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Typography,
   Container,
 } from "@mui/material";
-import "./addRecipePage.css";
+import "./editRecipePage.css";
 import { MdEdit } from "react-icons/md";
 
-const AddRecipePage = () => {
-  const [userID, setUserID] = useState('');
+const EditRecipePage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [imgSrc, setImgSrc] = useState(null);
+  const [imgID, setImgID] = useState('');
   const [title, setTitle] = useState('');
   const [difficulty, setDifficulty] = useState("Beginner");
   const [expectedTime, setExpectedTime] = useState('');
@@ -18,16 +22,51 @@ const AddRecipePage = () => {
   const [instructions, setInstructions] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+  const [render, setRender] = useState(false);
 
-  const fetchUserId = async () => {
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/${id}/image/`);
+        if (response.data?.images_ids?.length > 0) {
+          const imageId = response.data.images_ids[0];
+          const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
+          const imageUrl = URL.createObjectURL(imageResponse.data);
+          setImgID(imageId);
+          setImgSrc(imageUrl);
+        } else {
+          console.log("No image IDs found in the response.");
+        }
+      } catch (error) {
+        console.error("Error fetching image", error);
+      }
+      setRender(true);
+    };
+
+    fetchImage();
+  }, [id]);
+
+  const fetchRecipeData = async () => {
     try {
-      axios
-      .get("/api/auth/id")
-      .then((response) => {
-        setUserID(response.data.id);
-       });
+      const response = await axios.get(`/api/recipes/${id}`);
+      const recipe = response.data;
+      const ingredientsResp= await axios.get(`/api/recipes/${id}/ingredients`);
+
+      setTitle(recipe.name);
+      setDifficulty(recipe.difficulty);
+      setExpectedTime(recipe.expectedTime);
+      setIngredients(ingredientsResp.data);
+      setInstructions(recipe.instructions);
+      setDescription(recipe.description);
+      if (imgSrc) {
+        setImage(imgSrc);
+        const preview = document.getElementById('image-preview');
+        preview.src = imgSrc;
+        preview.style.display = 'block';
+      }
+
     } catch (error) {
-      console.error("Error fetching user ID:", error.response || error.message);
+      console.error("Error fetching recipe data:", error);
     }
   };
 
@@ -36,13 +75,11 @@ const AddRecipePage = () => {
 
     if (file) {
       const reader = new FileReader();
-
       reader.onloadend = () => {
         const preview = document.getElementById('image-preview');
         preview.src = reader.result;
         preview.style.display = 'block';
       };
-
       reader.readAsDataURL(file);
       setImage(file);
     }
@@ -75,37 +112,52 @@ const AddRecipePage = () => {
     try {
       const payload = {
         name: title,
-        timeCreated: new Date().toISOString(),
         expectedTime: expectedTime,
         difficulty: difficulty,
         description: description,
         instructions: instructions,
-        ingredients: ingredients.map((ingredient) => ({
-          name: ingredient.name,
-          amount: ingredient.amount,
-        })),
       };
 
-      const response = await axios.post(`/api/users/${userID}/recipes`, payload, {
+      const response = await axios.patch(`/api/recipes/${id}`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true,
       });
 
-      const recipeId = response.data.ID;
+      // delete old ingredients
+      const delete_resp = await axios.delete(`/api/recipes/${id}/ingredients`);
+      if (delete_resp.status === 200) {
+        console.log("Ingredients deleted successfully:", delete_resp.data.message);
+      }
+
+      const ingredientsData = {
+        ingredients: ingredients.map((ingredient) => ({
+          name: ingredient.name,
+          amount: ingredient.amount,
+        })),
+      };
+
+      // upload new ingredients
+      await axios.post(`/api/recipes/${id}/ingredients`, ingredientsData);
+      console.log('Ingredients added successfully:', response.data);
 
       if (image) {
         const formData = new FormData();
         formData.append('file', image);
-    
-        await axios.post(`/api/recipes/${recipeId}/image/`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true,
-        });
+        if (imgID !== '') {
+          await axios.patch(`/api/recipes/${id}/image/${imgID}/`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true,
+          });
+        } else {
+          await axios.post(`/api/recipes/${id}/image`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true,
+          });
+
+        }
         console.log('Image uploaded successfully!');
-      } else {
-        console.log('No image to upload.');
       }
 
       // reset form
@@ -122,23 +174,31 @@ const AddRecipePage = () => {
         preview.style.display = 'none';
       }
 
-      alert("Succesfully added new recipe!");
+      alert("Succesfully edited your recipe!");
+      navigate(-1);
     } catch (error) {
-      console.error("Error adding recipe:", error.response || error.message);
-      alert("Failed to add recipe. Please try again.");
+      console.error("Error editting recipe:", error.response || error.message);
+      alert("Failed to edit recipe. Please try again.");
     }
   };
 
+  const handleCancel = (e) => {
+    e.preventDefault();
+    navigate(-1);
+  };
+
   useEffect(() => {
-    fetchUserId();
-    document.title = "Add Recipe";
-  }, []);
+    document.title = "Edit Recipe";
+    if (render) {
+      fetchRecipeData();
+    }
+  }, [render]);
 
   return (
     <>
       <Header />
       <Typography variant="h4" className="my-recipes">
-        Add Recipe <MdEdit class="recipe-icon" />
+        Edit Recipe <MdEdit class="recipe-icon" />
       </Typography>
       <Container className="form-container">
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="add-form">
@@ -151,7 +211,6 @@ const AddRecipePage = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Set title"
-              maxLength={48}
               required
             />
           </div>
@@ -167,7 +226,7 @@ const AddRecipePage = () => {
             >
               <option value="Beginner">Beginner</option>
               <option value="Intermediate">Intermediate</option>
-              <option value="Advance">Advance</option>
+              <option value="Expert">Expert</option>
             </select>
           </div>
 
@@ -268,7 +327,17 @@ const AddRecipePage = () => {
 
           <img id="image-preview" src="" alt="Image Preview" className="image-preview" />
 
-          <button type="submit" className="add-button">Add Recipe</button>
+          <div class="button-group">
+          <button
+            type="submit"
+            className="save-button"
+            >Save</button>
+          <button
+            type="submit"
+            className="cancel-button"
+            onClick={handleCancel}
+            >Cancel</button>
+          </div>
         </form>
       </Container>
       <Footer />
@@ -276,4 +345,4 @@ const AddRecipePage = () => {
   );
 };
 
-export default AddRecipePage;
+export default EditRecipePage;
