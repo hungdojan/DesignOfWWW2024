@@ -123,3 +123,21 @@ class RecipeManager(BaseManager[Recipes]):
 
         ing.IngredientManager.insert_multiple_obj(ings)
         return [i.ID for i in ings]
+
+    @classmethod
+    def insert_recipe_external(cls, recipe_data: dict) -> Recipes:
+        ing_list = recipe_data.pop("ingredients")
+        _filt_cols = allowed_columns(recipe_data, cls._model_class)
+        recipe = cls.insert_one(
+            **_filt_cols,
+            timeCreated=datetime.now(),
+            ingredients=[],
+            favorited_by=[],
+        )
+
+        ingred_obj = [
+            ing.Ingredients(**i)
+            for i in ing_list
+        ]
+        ing.IngredientManager.insert_multiple_obj(ingred_obj)
+        return recipe

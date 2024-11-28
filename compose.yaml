@@ -1,4 +1,4 @@
-name: food-tips
+name: food-tips-dev
 
 services:
   database:

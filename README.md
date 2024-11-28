@@ -17,6 +17,8 @@ You can find a template in `./config/example/env_example`.
 
 Fill in the following values in the `.env` file:
 
+- `DB_LOCAL_DIR`: A directory on the host machine where persistent database data are stored.
+- `IMAGE_LOCAL_DIR`: A directory on the host machine where images will be stored.
 - `DB_USERNAME`: Root username for the database
 - `DB_PASSWORD`: Root password for the database
 - `DB_NAME`: Name of the database
@@ -99,17 +101,63 @@ If you need to update the database schema, make sure to modify both:
 - `./config/mariadb/init_scripts/00-init_script.sql`
 - `./backend/src/models/`
 
-If persistent data is enabled in the `compose.yaml` file, you must delete the persistent volume before restarting the containers. Here’s how:
+If persistent data is enabled in the `compose.yaml` file, you must delete the persistent data before restarting the containers. Here’s how:
 
 ```sh
 $ podman-compose down
 ... terminating containers ...
 
-# the volume is named differently if using docker
-# the user can omit this step if persistent volume is not enabled
-$ podman volume rm food-tips_db_volume
-... deleting the persistent volume ...
+# delete database data and images stored under
+# DB_LOCAL_DIR and IMAGE_LOCAL_DIR environment variables
+# these variables should be defined in '.env' file
+$ rm -rf "${DB_LOCAL_DIR}*"
+... deleting database data ...
+
+$ rm -rf "${IMAGE_LOCAL_DIR}*"
+... deleting images data ...
 
 $ podman-compose up
 ... creating a volume and starting containers ...
 ```
+
+## Fetching new recipes
+
+Please note that this web application is intended for educational purposes only, as a proof of concept. For commercial use, please contact the team behind the API.
+
+The Python script located at `./backend/scripts/fetch_recipes.py` can be used to
+fetch new recipes from the external API, [The Meal DB](https://www.themealdb.com/api.php).
+Please note that this web application is intended for educational purposes only, as a proof of concept. For commercial use, please contact the [team behind the API](thedatadb@gmail.com).
+
+#### Usage
+
+To fetch and load new recipes, follow these steps:
+
+1. Use the fetch_recipes.py script to generate a JSON file.
+2. Use the load-recipes CLI option to load the generated JSON file.
+
+Ensure that the requests library is installed.
+
+```sh
+# If the 'requests' library is not installed
+# Install it using:
+# pip install requests
+
+# It's recommended to generate the output file in the ./backend folder
+python ./backend/scripts/fetch_recipes.py > ./data/
+
+# Alternatively, you can execute the script inside a container
+podman exec -it <food-tips_backend_1> bash -c "python /design_of_www/scripts/fetch_recipes.py > /design_of_www/scripts/recipes.json"
+
+# Load the generated JSON file with the load-recipes command
+podman exec -it <food-tips_backend_1> bash -c "python /design_of_www/src/app/__init__.py load-recipes /design_of_www/scripts/recipes.json"
+```
+
+## Deployment
+To deploy the web application, used the provided `prod_compose.yaml` file.
+```sh
+podman-compose -f prod_compose.yaml build
+podman-compose -f prod_compose.yaml up
+```
+
+Please note that the production containers are named with a prefix `food-tips-prod` instead
+of `food-tips-dev`.

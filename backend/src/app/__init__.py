@@ -1,13 +1,16 @@
+import json
 import os
+from pathlib import Path
 
+import click
 import mysql.connector
 from api import food_tips_api
+from auth import login_manager
 from dotenv import load_dotenv
 from flask import Flask
+from flask.cli import FlaskGroup
 from flask_cors import CORS
 from models import DB
-
-from auth import login_manager
 
 load_dotenv()
 
@@ -37,10 +40,33 @@ def create_app() -> Flask:
     CORS(app, resources={r"/*": {"origins": "*"}})
     app.url_map.strict_slashes = False
 
-
     food_tips_api.init_app(app)
     DB.init_app(app)
     with app.app_context():
         DB.create_all()
 
     return app
+
+
+cli = FlaskGroup(create_app=create_app)
+
+
+@cli.command("load-recipes", help="Load external recipes.")
+@click.argument(
+    "json-file", type=click.Path(exists=True, readable=True, resolve_path=True)
+)
+def load_recipes(json_file):
+    from models.images import ImageManager
+    from models.recipes import RecipeManager
+
+    data = json.loads(Path(json_file).read_text())
+
+    for i in data:
+        image_data = i.pop("image")
+        recipe = i
+        RecipeManager.insert_recipe_external(recipe)
+        ImageManager.insert_external_image(image_data)
+
+
+if __name__ == "__main__":
+    cli()
