@@ -13,13 +13,34 @@ import {
 import { FaSearch } from "react-icons/fa";
 import "./landingPage.css";
 
-<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"></link>
+<link
+  href="https://fonts.googleapis.com/css2?family=Lobster&display=swap"
+  rel="stylesheet"
+></link>;
+
+// code snippet origin: https://stackoverflow.com/a/2450976
+const shuffle = (array) => {
+  let currentIndex = array.length;
+
+  // While there remain elements to shuffle...
+  while (currentIndex != 0) {
+    // Pick a remaining element...
+    let randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+};
 
 const LandingPage = () => {
   const [recipes, setRecipes] = useState([]);
   const [popularRecipes, setPopularRecipes] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchPerformed, setSearchPerformed] = useState(false);
 
   const handleInputChange = (event) => {
@@ -31,7 +52,7 @@ const LandingPage = () => {
       setFilteredRecipes(recipes);
     } else {
       const filtered = recipes.filter((recipe) =>
-        recipe.name.toLowerCase().includes(query.toLowerCase())
+        recipe.name.toLowerCase().includes(query.toLowerCase()),
       );
       setFilteredRecipes(filtered);
     }
@@ -42,6 +63,7 @@ const LandingPage = () => {
       .get("/api/recipes/")
       .then((resp) => {
         setRecipes(resp.data);
+        shuffle(resp.data);
         setPopularRecipes(resp.data.slice(0, 12));
       })
       .catch((err) => alert("Error fetching recipes: " + err));
@@ -121,7 +143,7 @@ const LandingPage = () => {
           <Grid2 container spacing={{ xs: 0, sm: 2 }} className="box-grid">
             {filteredRecipes.length === 0 ? (
               <Container maxWidth="md" className="container">
-                  <Typography className="empty">No recipe found.</Typography>
+                <Typography className="empty">No recipe found.</Typography>
               </Container>
             ) : (
               filteredRecipes.map((recipe) => (
