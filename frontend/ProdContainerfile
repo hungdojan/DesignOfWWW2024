@@ -1,8 +1,14 @@
 FROM docker.io/library/node:latest
 
 WORKDIR /design_of_www
+COPY package*.json ./
+RUN npm ci \
+    && npm install -g serve \
+    && npm cache clean --force
+
 COPY ./ /design_of_www
-RUN npm install
+
+RUN npm run build
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["serve", "-s", "build"]

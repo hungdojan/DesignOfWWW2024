@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import axios from 'axios';
+import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Typography,
-  Container,
-} from "@mui/material";
+import { Typography, Container } from "@mui/material";
 import "./editRecipePage.css";
 import { MdEdit } from "react-icons/md";
 
@@ -14,14 +11,15 @@ const EditRecipePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [imgSrc, setImgSrc] = useState(null);
-  const [imgID, setImgID] = useState('');
-  const [title, setTitle] = useState('');
+  const [imgID, setImgID] = useState("");
+  const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState("Beginner");
-  const [expectedTime, setExpectedTime] = useState('');
+  const [expectedTime, setExpectedTime] = useState("");
   const [ingredients, setIngredients] = useState([{ name: "", amount: "" }]);
-  const [instructions, setInstructions] = useState('');
-  const [description, setDescription] = useState('');
+  const [instructions, setInstructions] = useState("");
+  const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [imageUpdate, setImageUpdate] = useState(false);
   const [render, setRender] = useState(false);
 
   useEffect(() => {
@@ -30,7 +28,9 @@ const EditRecipePage = () => {
         const response = await axios.get(`/api/recipes/${id}/image/`);
         if (response.data?.images_ids?.length > 0) {
           const imageId = response.data.images_ids[0];
-          const imageResponse = await axios.get(`/api/images/${imageId}`, { responseType: "blob" });
+          const imageResponse = await axios.get(`/api/images/${imageId}`, {
+            responseType: "blob",
+          });
           const imageUrl = URL.createObjectURL(imageResponse.data);
           setImgID(imageId);
           setImgSrc(imageUrl);
@@ -50,7 +50,7 @@ const EditRecipePage = () => {
     try {
       const response = await axios.get(`/api/recipes/${id}`);
       const recipe = response.data;
-      const ingredientsResp= await axios.get(`/api/recipes/${id}/ingredients`);
+      const ingredientsResp = await axios.get(`/api/recipes/${id}/ingredients`);
 
       setTitle(recipe.name);
       setDifficulty(recipe.difficulty);
@@ -60,11 +60,10 @@ const EditRecipePage = () => {
       setDescription(recipe.description);
       if (imgSrc) {
         setImage(imgSrc);
-        const preview = document.getElementById('image-preview');
+        const preview = document.getElementById("image-preview");
         preview.src = imgSrc;
-        preview.style.display = 'block';
+        preview.style.display = "block";
       }
-
     } catch (error) {
       console.error("Error fetching recipe data:", error);
     }
@@ -76,18 +75,19 @@ const EditRecipePage = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const preview = document.getElementById('image-preview');
+        const preview = document.getElementById("image-preview");
         preview.src = reader.result;
-        preview.style.display = 'block';
+        preview.style.display = "block";
       };
       reader.readAsDataURL(file);
       setImage(file);
+      setImageUpdate(true);
     }
   };
 
   const handleResize = (e) => {
     const textarea = e.target;
-    textarea.style.height = 'auto';
+    textarea.style.height = "auto";
     textarea.style.height = `${textarea.scrollHeight}px`;
   };
 
@@ -120,7 +120,7 @@ const EditRecipePage = () => {
 
       const response = await axios.patch(`/api/recipes/${id}`, payload, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         withCredentials: true,
       });
@@ -128,7 +128,10 @@ const EditRecipePage = () => {
       // delete old ingredients
       const delete_resp = await axios.delete(`/api/recipes/${id}/ingredients`);
       if (delete_resp.status === 200) {
-        console.log("Ingredients deleted successfully:", delete_resp.data.message);
+        console.log(
+          "Ingredients deleted successfully:",
+          delete_resp.data.message
+        );
       }
 
       const ingredientsData = {
@@ -140,38 +143,37 @@ const EditRecipePage = () => {
 
       // upload new ingredients
       await axios.post(`/api/recipes/${id}/ingredients`, ingredientsData);
-      console.log('Ingredients added successfully:', response.data);
+      console.log("Ingredients added successfully:", response.data);
 
-      if (image) {
+      if (imageUpdate) {
         const formData = new FormData();
-        formData.append('file', image);
-        if (imgID !== '') {
+        formData.append("file", image);
+        if (imgID !== "") {
           await axios.patch(`/api/recipes/${id}/image/${imgID}/`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true,
           });
         } else {
           await axios.post(`/api/recipes/${id}/image`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
+            headers: { "Content-Type": "multipart/form-data" },
             withCredentials: true,
           });
-
         }
-        console.log('Image uploaded successfully!');
+        console.log("Image uploaded successfully!");
       }
 
       // reset form
-      setTitle('');
+      setTitle("");
       setDifficulty("Beginner");
-      setExpectedTime('');
+      setExpectedTime("");
       setIngredients([{ name: "", amount: "" }]);
-      setInstructions('');
-      setDescription('');
+      setInstructions("");
+      setDescription("");
       setImage(null);
 
-      const preview = document.getElementById('image-preview');
+      const preview = document.getElementById("image-preview");
       if (preview) {
-        preview.style.display = 'none';
+        preview.style.display = "none";
       }
 
       alert("Succesfully edited your recipe!");
@@ -201,7 +203,11 @@ const EditRecipePage = () => {
         Edit Recipe <MdEdit class="recipe-icon" />
       </Typography>
       <Container className="form-container">
-        <form onSubmit={handleSubmit} encType="multipart/form-data" className="add-form">
+        <form
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+          className="add-form"
+        >
           <div className="one-item">
             <label htmlFor="title">Recipe Title</label>
             <input
@@ -276,7 +282,9 @@ const EditRecipePage = () => {
                     type="button"
                     onClick={() => handleRemoveIngredient(index)}
                     className="ingredient-btn"
-                  >-</button>
+                  >
+                    -
+                  </button>
                 </div>
               ))}
             </div>
@@ -284,7 +292,9 @@ const EditRecipePage = () => {
               type="button"
               onClick={handleAddIngredient}
               className="add-ingredient-btn"
-            >+</button>
+            >
+              +
+            </button>
           </div>
 
           <div className="one-item">
@@ -322,21 +332,29 @@ const EditRecipePage = () => {
               onChange={handleImageUpload}
               accept="image/*"
             />
-            <label htmlFor="image" className="upload-btn">+</label>
+            <label htmlFor="image" className="upload-btn">
+              +
+            </label>
           </div>
 
-          <img id="image-preview" src="" alt="Image Preview" className="image-preview" />
+          <img
+            id="image-preview"
+            src=""
+            alt="Image Preview"
+            className="image-preview"
+          />
 
           <div class="button-group">
-          <button
-            type="submit"
-            className="save-button"
-            >Save</button>
-          <button
-            type="submit"
-            className="cancel-button"
-            onClick={handleCancel}
-            >Cancel</button>
+            <button type="submit" className="save-button">
+              Save
+            </button>
+            <button
+              type="submit"
+              className="cancel-button"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </Container>
